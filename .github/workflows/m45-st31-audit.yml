@@ -1,0 +1,37 @@
+name: M45 ST31 Audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st28/**'
+      - 'm45-st29/**'
+      - 'm45-st30/**'
+      - 'm45-st31/**'
+      - '.github/workflows/m45-st31-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'm45-st28/**'
+      - 'm45-st29/**'
+      - 'm45-st30/**'
+      - 'm45-st31/**'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 -m unittest discover -s m45-st28 -p 'test_*.py'
+      - run: python3 -m unittest discover -s m45-st30 -p 'test_*.py'
+      - run: python3 -m unittest discover -s m45-st31 -p 'test_*.py'
+      - run: python3 m45-st31/verify_journal.py
+      - run: node m45-st29/test_sk.cjs
+      - run: node m45-st31/test_sk.cjs
