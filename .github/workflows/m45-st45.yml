@@ -1,0 +1,36 @@
+name: M45 ST45 Unified Machine
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st45/**'
+      - 'm45-st44/**'
+      - 'm45-st43/**'
+      - 'm45-st42/**'
+      - '.github/workflows/m45-st45.yml'
+permissions:
+  contents: read
+concurrency:
+  group: m45-st45-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st45 -p 'test_*.py'
+      - name: End-to-end finite machine
+        run: |
+          python3 m45-st45/unified_machine.py --file doraemon-g.json --init --action inspect
+          python3 m45-st45/unified_machine.py --file doraemon-g.json --action remember --payload '{"name":"Doraemon","values":[1,0,2],"message":"Help others"}'
+          python3 m45-st45/unified_machine.py --file doraemon-g.json --action recall --payload '{"code":1500}'
+          python3 m45-st45/unified_machine.py --file doraemon-g.json --action tick
+          python3 m45-st45/unified_machine.py --file doraemon-g.json --action stop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st45-unified-machine-state
+          path: doraemon-g.json
