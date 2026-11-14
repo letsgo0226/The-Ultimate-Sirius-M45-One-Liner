@@ -19,7 +19,7 @@ def primes(n):
     return result
 
 def rational(x):
-    if isinstance(x,bool) or not isinstance(x,(int,str)):raise ValueError("use exact integer or fraction string")
+    if isinstance(x,bool) or not isinstance(x,(int,str,Fraction)):raise ValueError("use exact integer, fraction string, or Fraction")
     f=Fraction(x)
     if f.denominator>1000000 or abs(f.numerator)>1000000000:
         raise ValueError("coefficient out of bounds")
