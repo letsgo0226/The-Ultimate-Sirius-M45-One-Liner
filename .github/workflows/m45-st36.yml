@@ -1,0 +1,37 @@
+name: M45 ST36 Regularized Computation
+on:
+  workflow_dispatch:
+    inputs:
+      expression:
+        description: 'Prefix SK expression'
+        required: true
+        default: '@@@SKKS'
+      tape_cap:
+        description: 'Maximum encoded expression length (1-10000)'
+        required: true
+        default: '10000'
+  pull_request:
+    paths:
+      - 'm45-st36/**'
+      - '.github/workflows/m45-st36.yml'
+permissions:
+  contents: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st36 -p 'test_*.py'
+      - name: Bounded regularization experiment
+        env:
+          EXPR: ${{ inputs.expression || '@@@SKKS' }}
+          CAP: ${{ inputs.tape_cap || '10000' }}
+        run: python3 m45-st36/regularize.py --expression "$EXPR" --tape-cap "$CAP" --out regularization.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st36-regularization-certificate
+          path: regularization.json
