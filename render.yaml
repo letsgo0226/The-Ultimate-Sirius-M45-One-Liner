@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: doraemon-lab-m45
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: doraemon-lab
+    buildCommand: echo ready
+    startCommand: python3 app.py
+    healthCheckPath: /health
+    autoDeployTrigger: off
