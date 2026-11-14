@@ -1,0 +1,24 @@
+name: M45 ST42 Godel Prime Pocket
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st42/**'
+      - '.github/workflows/m45-st42.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st42 -p 'test_*.py'
+      - run: python3 m45-st42/pocket.py --values 1,0,2 --out pocket.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st42-pocket-record
+          path: pocket.json
