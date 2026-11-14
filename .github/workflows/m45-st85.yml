@@ -2,6 +2,7 @@ name: M45 ST85 Scientific Integrity
 on:
   push:
     paths:
+      - 'm45-st79/**'
       - 'm45-st81/**'
       - 'm45-st82/**'
       - 'm45-st83/**'
@@ -10,6 +11,7 @@ on:
       - '.github/workflows/m45-st85.yml'
   pull_request:
     paths:
+      - 'm45-st79/**'
       - 'm45-st81/**'
       - 'm45-st82/**'
       - 'm45-st83/**'
