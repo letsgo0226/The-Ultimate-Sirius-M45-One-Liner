@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="非官方未來科技實驗室：探索 SK 組合子與可計算性。">
+<title>Doraemon Lab · 未來實驗室</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
+*{box-sizing:border-box}
+body{background:linear-gradient(160deg,#e5f5ff,#fff8ea);color:#19374a;min-height:100vh;margin:0}
+main{max-width:780px;margin:5vh auto;padding:20px}
+.hero{background:#fff;border-radius:24px;padding:clamp(22px,5vw,42px);box-shadow:0 12px 40px #739dbc30}
+h1{color:#0678b9;font-size:clamp(28px,5vw,42px)}
+label{display:block;font-weight:650;margin:24px 0 9px}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+input,button{padding:13px 15px;font:inherit;border-radius:12px}
+input{border:1px solid #9dc2d4;min-width:0;flex:1}
+button{border:0;background:#0679ba;color:white;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+pre{overflow-wrap:anywhere;white-space:pre-wrap;background:#f0f7fc;padding:18px;border-radius:12px;line-height:1.6}
+small{color:#546e7d}
+</style>
+</head>
+<body><main><section class="hero">
+<h1>🔔 Doraemon Lab</h1>
+<p>以未來道具的想像力、友誼與可計算性為主題的非官方研究原型。</p>
+<p>請輸入前綴 SK 表達式，使用 <code>@</code> 表示函數應用。</p>
+<label for="expr">SK 表達式</label>
+<div class="controls"><input id="expr" value="@@@SKKS" maxlength="300" spellcheck="false" autocomplete="off"><button id="run" type="button">執行化簡</button></div>
+<pre id="out" aria-live="polite">準備就緒。範例 @@@SKKS → S</pre>
+<small>本實驗室不是官方哆啦A夢產品，未使用官方圖像或配音。目前提供 SK 計算，不提供 AI 對話，也不代表物理世界中的角色實體。</small>
+</section></main>
+<script>
+const button=document.getElementById('run');
+button.addEventListener('click',async()=>{
+ const box=document.getElementById('out');
+ button.disabled=true;box.textContent='計算中…';
+ try{
+  const response=await fetch('/api/sk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expression:document.getElementById('expr').value,budget:30})});
+  const data=await response.json();
+  box.textContent=data.error||('狀態：'+data.status+'\n步數：'+data.steps+'\n化簡軌跡：\n'+data.trace.join('\n↓\n'));
+ }catch(error){box.textContent='連線失敗：'+error.message}
+ finally{button.disabled=false}
+});
+</script>
+</body>
+</html>
