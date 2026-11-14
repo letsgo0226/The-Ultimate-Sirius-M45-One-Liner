@@ -1,0 +1,12 @@
+{
+  "table_hash": "326ba5e759ded497e6e8219ec3430ef4c25d863febb58377242194ce6d8a7287",
+  "state": "scan",
+  "head": 0,
+  "steps": 0,
+  "generation": 0,
+  "cells": {
+    "0": "1",
+    "1": "1",
+    "2": "1"
+  }
+}
