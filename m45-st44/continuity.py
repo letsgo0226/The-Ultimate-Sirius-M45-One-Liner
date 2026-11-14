@@ -90,8 +90,7 @@ def main():
     path=Path(a.state)
     if a.init:
         if path.exists():raise SystemExit("Refusing to overwrite existing state")
-        pocket.save(path,genesis(ledger)) if False else path.write_text(
-            json.dumps(genesis(ledger),ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        path.write_text(json.dumps(genesis(ledger),ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
     state=json.loads(path.read_text(encoding="utf-8"))
     if not verify(state,ledger):raise SystemExit("Invalid state or pocket")
     if a.stop:
