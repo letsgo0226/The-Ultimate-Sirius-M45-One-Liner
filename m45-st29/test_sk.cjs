@@ -1,0 +1,10 @@
+const assert=require("node:assert/strict");
+require("./site/sk.js");
+const {evaluate,parse,encode}=globalThis.SKLab;
+assert.deepEqual(evaluate("@@@SKKS").trace,["@@@SKKS","@@KS@KS","S"]);
+assert.equal(evaluate("@@KSK").result,"S");
+assert.equal(evaluate("@SK").status,"NORMAL");
+assert.equal(evaluate("@@@SKKS",0).status,"UNRESOLVED");
+assert.equal(encode(parse("@@KSK")),"@@KSK");
+for(const invalid of ["","@S","SK","X","@@@"])assert.throws(()=>evaluate(invalid));
+console.log("M45-ST29 JS smoke tests PASS");
