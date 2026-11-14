@@ -1,0 +1,24 @@
+name: M45 ST33 Fixed Delta K
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st33/**'
+      - '.github/workflows/m45-st33.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st33 -p 'test_*.py'
+      - run: python3 m45-st33/tm.py --expression '@@KSK' --out certificate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st33-fixed-delta-certificate
+          path: certificate.json
