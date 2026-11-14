@@ -1,0 +1,11 @@
+const assert=require("node:assert/strict");
+require("../m45-st29/site/sk.js");
+const {verify}=require("./verify_sk.cjs");
+const cert={protocol:"M45-ST29",...globalThis.SKLab.evaluate("@@@SKKS",30)};
+assert.deepEqual(verify(cert),{status:"PASS",steps:2,result:"S"});
+const tampered=JSON.parse(JSON.stringify(cert));
+tampered.trace[1]="K";
+assert.throws(()=>verify(tampered));
+const fakeStatus={...cert,status:"UNRESOLVED"};
+assert.throws(()=>verify(fakeStatus));
+console.log("M45-ST31 SK trace verifier PASS");
