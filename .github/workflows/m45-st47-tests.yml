@@ -1,0 +1,23 @@
+name: M45 ST47 State Protocol Tests
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st47/**'
+      - 'm45-st45/**'
+      - '.github/workflows/m45-st47-tests.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st47 -p 'test_*.py'
+      - run: |
+          python3 m45-st47/state_transition.py --action init --output state.json
+          python3 m45-st47/state_transition.py --action tick --input state.json --output next.json --expected-revision 0
