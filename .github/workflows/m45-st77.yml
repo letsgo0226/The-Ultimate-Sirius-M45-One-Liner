@@ -1,0 +1,32 @@
+name: M45 ST77 Heldout Model Criticism
+on:
+  push:
+    paths:
+      - 'm45-st77/**'
+      - 'm45-st76/bayesian_model_selection.py'
+      - 'm45-st69/observer_estimation.py'
+      - 'm45-st68/quantum_metrology.py'
+      - 'm45-st64/frame_switch.py'
+      - '.github/workflows/m45-st77.yml'
+  pull_request:
+    paths:
+      - 'm45-st77/**'
+      - 'm45-st76/bayesian_model_selection.py'
+      - 'm45-st69/observer_estimation.py'
+      - 'm45-st68/quantum_metrology.py'
+      - 'm45-st64/frame_switch.py'
+      - '.github/workflows/m45-st77.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st77 -p 'test_*.py'
+      - run: python3 m45-st77/predictive_criticism.py --train-shots 40 --holdout-shots 30
