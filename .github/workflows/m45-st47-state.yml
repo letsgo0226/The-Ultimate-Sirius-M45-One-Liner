@@ -1,0 +1,85 @@
+name: M45 ST47 Manual Single-Writer State
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "One bounded operation"
+        required: true
+        type: choice
+        options:
+          - init
+          - remember
+          - recall
+          - tick
+          - inspect
+          - stop
+      expected_revision:
+        description: "Expected current state revision (non-init)"
+        required: false
+        default: "0"
+        type: string
+      payload:
+        description: "JSON object for operation"
+        required: false
+        default: "{}"
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: m45-st47-state-writer
+  cancel-in-progress: false
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate and calculate next state
+        env:
+          ACTION: ${{ inputs.action }}
+          EXPECTED: ${{ inputs.expected_revision }}
+          PAYLOAD: ${{ inputs.payload }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin m45-st47-state >/dev/null; then
+            git fetch origin refs/heads/m45-st47-state:refs/remotes/origin/m45-st47-state
+            git show origin/m45-st47-state:doraemon-g-state.json > previous.json
+            if [ "$ACTION" = init ]; then
+              echo "State already initialized" >&2
+              exit 1
+            fi
+            python3 m45-st47/state_transition.py --input previous.json --output next.json --action "$ACTION" --expected-revision "$EXPECTED" --payload "$PAYLOAD"
+          else
+            if [ "$ACTION" != init ]; then
+              echo "Initialize the state branch first" >&2
+              exit 1
+            fi
+            python3 m45-st47/state_transition.py --output next.json --action init
+          fi
+      - name: Commit with non-force push
+        if: ${{ inputs.action != 'inspect' && inputs.action != 'recall' }}
+        run: |
+          set -euo pipefail
+          if git show-ref --verify --quiet refs/remotes/origin/m45-st47-state; then
+            git worktree add -b st47-writer state-worktree origin/m45-st47-state
+          else
+            git worktree add -b st47-writer state-worktree HEAD
+          fi
+          cp next.json state-worktree/doraemon-g-state.json
+          cd state-worktree
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add doraemon-g-state.json
+          git commit -m "ST47: verified bounded state transition"
+          git push origin HEAD:refs/heads/m45-st47-state
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st47-state-result
+          path: next.json
+          retention-days: 7
