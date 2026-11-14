@@ -57,7 +57,7 @@ def sha(obj):
 def certify(expression,budget=30,cap=10000):
     if type(budget) is not int or not 0<=budget<=100:
         raise ValueError("budget out of range")
-    if type(cap) is not int or not 1<=cap<=10000:
+    if type(cap) is not int or not 1<=cap<=300:
         raise ValueError("cap out of range")
     tree=producer.parse(expression)
     current=producer.encode(tree)
@@ -94,7 +94,7 @@ def verify(cert):
         expr=content["expression"]
         parse(expr)
         budget,cap=content["budget"],content["cap"]
-        if type(budget) is not int or not 0<=budget<=100 or type(cap) is not int or not 1<=cap<=10000:
+        if type(budget) is not int or not 0<=budget<=100 or type(cap) is not int or not 1<=cap<=300:
             return False
         trace=content["trace"]
         if not isinstance(trace,list) or len(trace)>budget:return False
@@ -119,7 +119,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--expression",default="@@@SKKS")
     p.add_argument("--budget",type=int,default=30)
-    p.add_argument("--cap",type=int,default=10000)
+    p.add_argument("--cap",type=int,default=300)
     p.add_argument("--out",default="m45-st37-certificate.json")
     a=p.parse_args()
     cert=certify(a.expression,a.budget,a.cap)
