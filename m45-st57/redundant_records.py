@@ -46,7 +46,7 @@ def analyze(n=12,p=0.5,q=0.1,delta=0.1):
     curve=[information(m,p,q) for m in range(n+1)]
     target=(1-delta)*plateau
     # If H(S)=0, information about S is trivially zero: no meaningful redundancy.
-    first=next((m for m in range(1,n+1) if curve[m]+1e-12>=target),None) if plateau>0 else None
+    first=next((m for m in range(1,n+1) if curve[m]+1e-12>=target),None) if plateau>0 and target>0 else None
     redundancy=(n//first) if first is not None else None
     return {
         "protocol":"M45-ST57-REDUNDANT-RECORDS-v1",
