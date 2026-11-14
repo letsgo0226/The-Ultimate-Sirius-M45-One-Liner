@@ -20,7 +20,7 @@ def load_module(name,relative_path):
 
 def reduced_first(psi):
     # psi[u,v], trace out v
-    return [[sum(psi[2*u+v]*psi[2+w+v].conjugate() for v in range(2))
+    return [[sum(psi[2*u+v]*psi[2*w+v].conjugate() for v in range(2))
              for w in range(2)] for u in range(2)]
 
 def reduced_second(psi):
