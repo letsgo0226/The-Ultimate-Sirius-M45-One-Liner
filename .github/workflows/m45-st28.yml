@@ -1,0 +1,36 @@
+name: M45 ST28 GitHub Native TM
+on:
+  workflow_dispatch:
+    inputs:
+      tape:
+        description: 'Unary tape (ones only)'
+        required: true
+        default: '111'
+      steps:
+        description: 'Maximum TM steps'
+        required: true
+        default: '100'
+permissions:
+  contents: read
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test
+        run: python3 -m unittest discover -s m45-st28 -p 'test_*.py'
+      - name: Execute TM
+        env:
+          TAPE: ${{ inputs.tape }}
+          STEPS: ${{ inputs.steps }}
+        run: |
+          python3 m45-st28/machine.py --tape "$TAPE" --steps "$STEPS" --out certificate.json
+          python3 m45-st28/machine.py --verify certificate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st28-certificate
+          path: certificate.json
