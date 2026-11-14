@@ -17,7 +17,7 @@ class PocketTests(unittest.TestCase):
         self.assertEqual(m.project(7,3),[0,0,0])
         self.assertEqual(m.project(72,3),[3,2,0])
     def test_noncanonical_rejected(self):
-        for n in (1,7,14,60):
+        for n in (1,7,14,420):
             with self.subTest(n=n):
                 with self.assertRaises(ValueError):m.decode(n,3)
     def test_pocket(self):
