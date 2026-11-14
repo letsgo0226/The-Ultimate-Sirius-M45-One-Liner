@@ -92,7 +92,7 @@ def analyze(theta=.3,q01=.05,q10=.2,late_science_drift=.3,shots=30,
         not math.isfinite(complexity_penalty) or
         not 0<=complexity_penalty<=1):
         raise ValueError("complexity_penalty must be finite in [0,1]")
-    p=mod.st76().st69_probability(theta,seed)
+    p=mod.load_st76().st69_probability(theta,seed)
     train=simulate(random.Random(seed),p,q01,q10,late_science_drift,shots)
     validation=simulate(random.Random(seed^0x9E3779B97F4A7C15),p,q01,q10,late_science_drift,shots)
     locked=simulate(random.Random(seed^0xD1B54A32D192ED03),p,q01,q10,late_science_drift,shots)
