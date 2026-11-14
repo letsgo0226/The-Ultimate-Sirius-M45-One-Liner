@@ -1,0 +1,161 @@
+{
+  "name": "atomic-K-all-four",
+  "start": "q0",
+  "halt": [
+    "HALT"
+  ],
+  "blank": "_",
+  "transitions": {
+    "q0": {
+      "@": [
+        "@",
+        "R",
+        "q1"
+      ]
+    },
+    "q1": {
+      "@": [
+        "@",
+        "R",
+        "q2"
+      ]
+    },
+    "q2": {
+      "K": [
+        "K",
+        "R",
+        "q3"
+      ]
+    },
+    "q3": {
+      "S": [
+        "S",
+        "R",
+        "checkS"
+      ],
+      "K": [
+        "K",
+        "R",
+        "checkK"
+      ]
+    },
+    "checkS": {
+      "S": [
+        "S",
+        "L",
+        "eraseXS"
+      ],
+      "K": [
+        "K",
+        "L",
+        "eraseXS"
+      ]
+    },
+    "eraseXS": {
+      "S": [
+        "_",
+        "L",
+        "eraseKS"
+      ]
+    },
+    "eraseKS": {
+      "K": [
+        "_",
+        "L",
+        "eraseAtS"
+      ]
+    },
+    "eraseAtS": {
+      "@": [
+        "_",
+        "L",
+        "writeS"
+      ]
+    },
+    "writeS": {
+      "@": [
+        "S",
+        "R",
+        "eraseYS"
+      ]
+    },
+    "eraseYS": {
+      "_": [
+        "_",
+        "R",
+        "eraseLastS"
+      ]
+    },
+    "eraseLastS": {
+      "S": [
+        "_",
+        "L",
+        "HALT"
+      ],
+      "K": [
+        "_",
+        "L",
+        "HALT"
+      ]
+    },
+    "checkK": {
+      "S": [
+        "S",
+        "L",
+        "eraseXK"
+      ],
+      "K": [
+        "K",
+        "L",
+        "eraseXK"
+      ]
+    },
+    "eraseXK": {
+      "K": [
+        "_",
+        "L",
+        "eraseKK"
+      ]
+    },
+    "eraseKK": {
+      "K": [
+        "_",
+        "L",
+        "eraseAtK"
+      ]
+    },
+    "eraseAtK": {
+      "@": [
+        "_",
+        "L",
+        "writeK"
+      ]
+    },
+    "writeK": {
+      "@": [
+        "K",
+        "R",
+        "eraseYK"
+      ]
+    },
+    "eraseYK": {
+      "_": [
+        "_",
+        "R",
+        "eraseLastK"
+      ]
+    },
+    "eraseLastK": {
+      "S": [
+        "_",
+        "L",
+        "HALT"
+      ],
+      "K": [
+        "_",
+        "L",
+        "HALT"
+      ]
+    }
+  }
+}
