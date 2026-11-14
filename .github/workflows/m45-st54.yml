@@ -1,0 +1,30 @@
+name: M45 ST54 Micro Macro Operator Correspondence
+on:
+  push:
+    paths:
+      - 'm45-st50/**'
+      - 'm45-st53/**'
+      - 'm45-st54/**'
+      - '.github/workflows/m45-st54.yml'
+  pull_request:
+    paths:
+      - 'm45-st50/**'
+      - 'm45-st53/**'
+      - 'm45-st54/**'
+      - '.github/workflows/m45-st54.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st50 -p 'test_*.py'
+      - run: python3 -m unittest discover -s m45-st53 -p 'test_*.py'
+      - run: python3 -m unittest discover -s m45-st54 -p 'test_*.py'
+      - run: python3 m45-st54/correspondence.py --n 32 --x 3/5 --z 4/5 --word HZ
