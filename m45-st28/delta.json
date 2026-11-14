@@ -1,0 +1,25 @@
+{
+  "name": "unary-successor",
+  "alphabet": [
+    "1",
+    "_"
+  ],
+  "start": "scan",
+  "halt": [
+    "HALT"
+  ],
+  "transitions": {
+    "scan": {
+      "1": [
+        "1",
+        "R",
+        "scan"
+      ],
+      "_": [
+        "1",
+        "N",
+        "HALT"
+      ]
+    }
+  }
+}
