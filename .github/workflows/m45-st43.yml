@@ -1,0 +1,30 @@
+name: M45 ST43 Persistent Pocket
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st43/**'
+      - 'm45-st42/**'
+      - '.github/workflows/m45-st43.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st43 -p 'test_*.py'
+      - name: Persist and retrieve example
+        run: |
+          python3 m45-st43/persistent_pocket.py --file pocket-ledger.json init
+          python3 m45-st43/persistent_pocket.py --file pocket-ledger.json add --name Doraemon --values 1,0,2 --message 'Help others'
+          python3 m45-st43/persistent_pocket.py --file pocket-ledger.json verify
+          python3 m45-st43/persistent_pocket.py --file pocket-ledger.json get --code 1500
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st43-pocket-ledger
+          path: pocket-ledger.json
