@@ -1,0 +1,38 @@
+name: M45 ST87 Academic Priority Research Audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 19 * * *'
+  pull_request:
+    paths:
+      - 'm45-st87/**'
+      - '.github/workflows/m45-st87.yml'
+      - 'm45-st86/**'
+permissions:
+  contents: read
+jobs:
+  isolated-research-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run bounded offline tests and produce evidence
+        run: python3 m45-st87/academic_priority.py --output m45-st87-report.json
+      - name: Upload auditable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m45-st87-evidence
+          path: m45-st87-report.json
+          if-no-files-found: warn
+          retention-days: 14
