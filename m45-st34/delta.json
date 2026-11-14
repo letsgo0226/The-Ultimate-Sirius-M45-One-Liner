@@ -1,0 +1,161 @@
+{
+  "name": "atomic-K-all-four",
+  "start": "q0",
+  "halt": [
+    "HALT"
+  ],
+  "blank": "_",
+  "transitions": {
+    "q0": {
+      "@": [
+        "@",
+        "R",
+        "q1"
+      ]
+    },
+    "q1": {
+      "@": [
+        "@",
+        "R",
+        "q2"
+      ]
+    },
+    "q2": {
+      "K": [
+        "K",
+        "R",
+        "q3"
+      ]
+    },
+    "q3": {
+      "S": [
+        "S",
+        "R",
+        "q4S"
+      ],
+      "K": [
+        "K",
+        "R",
+        "q4K"
+      ]
+    },
+    "q4S": {
+      "S": [
+        "S",
+        "R",
+        "endS"
+      ],
+      "K": [
+        "K",
+        "R",
+        "endS"
+      ]
+    },
+    "endS": {
+      "_": [
+        "_",
+        "L",
+        "eraseYS"
+      ]
+    },
+    "eraseYS": {
+      "S": [
+        "_",
+        "L",
+        "eraseXS"
+      ],
+      "K": [
+        "_",
+        "L",
+        "eraseXS"
+      ]
+    },
+    "eraseXS": {
+      "S": [
+        "_",
+        "L",
+        "eraseKS"
+      ]
+    },
+    "eraseKS": {
+      "K": [
+        "_",
+        "L",
+        "eraseAtS"
+      ]
+    },
+    "eraseAtS": {
+      "@": [
+        "_",
+        "L",
+        "writeS"
+      ]
+    },
+    "writeS": {
+      "@": [
+        "S",
+        "N",
+        "HALT"
+      ]
+    },
+    "q4K": {
+      "S": [
+        "S",
+        "R",
+        "endK"
+      ],
+      "K": [
+        "K",
+        "R",
+        "endK"
+      ]
+    },
+    "endK": {
+      "_": [
+        "_",
+        "L",
+        "eraseYK"
+      ]
+    },
+    "eraseYK": {
+      "S": [
+        "_",
+        "L",
+        "eraseXK"
+      ],
+      "K": [
+        "_",
+        "L",
+        "eraseXK"
+      ]
+    },
+    "eraseXK": {
+      "K": [
+        "_",
+        "L",
+        "eraseKK"
+      ]
+    },
+    "eraseKK": {
+      "K": [
+        "_",
+        "L",
+        "eraseAtK"
+      ]
+    },
+    "eraseAtK": {
+      "@": [
+        "_",
+        "L",
+        "writeK"
+      ]
+    },
+    "writeK": {
+      "@": [
+        "K",
+        "N",
+        "HALT"
+      ]
+    }
+  }
+}
