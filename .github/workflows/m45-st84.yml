@@ -1,0 +1,47 @@
+name: M45 ST84 Epistemic Governance
+on:
+  push:
+    paths:
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - 'm45-st83/**'
+      - 'm45-st84/**'
+      - '.github/workflows/m45-st84.yml'
+  pull_request:
+    paths:
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - 'm45-st83/**'
+      - 'm45-st84/**'
+      - '.github/workflows/m45-st84.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  governance-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st84 -p 'test_*.py'
+      - name: Generate ST81 audit
+        continue-on-error: true
+        run: python3 m45-st81/reproducibility_audit.py --run-tests --output m45-st81-audit.json
+      - run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --output m45-st82-ledger.json
+      - run: python3 m45-st83/epistemic_correction.py --ledger m45-st82-ledger.json --output m45-st83-plan.json
+      - run: python3 m45-st84/epistemic_governance.py --plan m45-st83-plan.json --output m45-st84-governance.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m45-st84-governance-audit
+          path: |
+            m45-st81-audit.json
+            m45-st82-ledger.json
+            m45-st83-plan.json
+            m45-st84-governance.json
+          if-no-files-found: ignore
+      - name: Enforce upstream evidence checks
+        run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --require-verified > /dev/null
