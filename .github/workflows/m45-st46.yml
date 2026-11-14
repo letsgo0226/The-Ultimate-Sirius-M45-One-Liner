@@ -1,0 +1,40 @@
+name: M45 ST46 Cross-Stage Regression
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st40/**'
+      - 'm45-st42/**'
+      - 'm45-st43/**'
+      - 'm45-st44/**'
+      - 'm45-st45/**'
+      - 'm45-st46/**'
+      - '.github/workflows/m45-st46.yml'
+permissions:
+  contents: read
+concurrency:
+  group: m45-st46-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run all relevant unit suites
+        run: |
+          python3 -m unittest discover -s m45-st40 -p 'test_*.py'
+          python3 -m unittest discover -s m45-st42 -p 'test_*.py'
+          python3 -m unittest discover -s m45-st43 -p 'test_*.py'
+          python3 -m unittest discover -s m45-st44 -p 'test_*.py'
+          python3 -m unittest discover -s m45-st45 -p 'test_*.py'
+          python3 -m unittest discover -s m45-st46 -p 'test_*.py'
+      - name: Generate ST40 certificate
+        run: python3 m45-st40/g2112.py --primes 3 --operator rotate --out st40-regression-certificate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st46-regression-certificate
+          path: st40-regression-certificate.json
