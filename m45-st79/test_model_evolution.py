@@ -15,14 +15,14 @@ class TestModelEvolution(unittest.TestCase):
             if name!="stationary":
                 self.assertEqual(len(g[name]),625)
     def test_mutation_locality(self):
-        base=(.55,.05,.15,0.,0.,0.)
-        variants={"science_drift":(.55,.05,.15,.3,0.,0.),
-                  "reference_zero_drift":(.55,.05,.15,0.,.3,0.),
-                  "reference_one_drift":(.55,.05,.15,0.,0.,.3)}
+        base=(.55,.05,.25,0.,0.,0.)
+        variants={"science_drift":(.55,.05,.25,.3,0.,0.),
+                  "reference_zero_drift":(.55,.05,.25,0.,.3,0.),
+                  "reference_one_drift":(.55,.05,.25,0.,0.,.2)}
         for name,h in variants.items():
             for action in m.ACTIONS:
                 delta=m.probability(h,action,"late")-m.probability(base,action,"late")
-                self.assertAlmostEqual(delta,.3 if action==name.replace("_drift","") else 0.)
+                self.assertAlmostEqual(delta,(.2 if action=="reference_one" else .3) if action==name.replace("_drift","") else 0.)
     def test_reproducible_and_test_locked(self):
         r=m.analyze(shots=8,seed=17)
         self.assertEqual(r,m.analyze(shots=8,seed=17))

@@ -1,0 +1,52 @@
+name: M45 ST81 Reproducibility Audit
+on:
+  push:
+    paths:
+      - 'm45-st64/**'
+      - 'm45-st68/**'
+      - 'm45-st69/**'
+      - 'm45-st73/**'
+      - 'm45-st74/**'
+      - 'm45-st75/**'
+      - 'm45-st76/**'
+      - 'm45-st77/**'
+      - 'm45-st78/**'
+      - 'm45-st79/**'
+      - 'm45-st80/**'
+      - 'm45-st81/**'
+      - '.github/workflows/m45-st81.yml'
+  pull_request:
+    paths:
+      - 'm45-st64/**'
+      - 'm45-st68/**'
+      - 'm45-st69/**'
+      - 'm45-st73/**'
+      - 'm45-st74/**'
+      - 'm45-st75/**'
+      - 'm45-st76/**'
+      - 'm45-st77/**'
+      - 'm45-st78/**'
+      - 'm45-st79/**'
+      - 'm45-st80/**'
+      - 'm45-st81/**'
+      - '.github/workflows/m45-st81.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st81 -p 'test_*.py'
+      - run: python3 m45-st81/reproducibility_audit.py --run-tests --output m45-st81-audit.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m45-st81-audit
+          path: m45-st81-audit.json
+          if-no-files-found: ignore
