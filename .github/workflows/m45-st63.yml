@@ -1,0 +1,24 @@
+name: M45 ST63 Relational Quantum Reference Frames
+on:
+  push:
+    paths:
+      - 'm45-st63/**'
+      - '.github/workflows/m45-st63.yml'
+  pull_request:
+    paths:
+      - 'm45-st63/**'
+      - '.github/workflows/m45-st63.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st63 -p 'test_*.py'
+      - run: python3 m45-st63/relational_frames.py --alpha 0.2 --beta 1.1 --shift 0.7
