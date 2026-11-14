@@ -1,0 +1,46 @@
+name: M45 ST48 Astronomical Observatory
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Solar system target"
+        required: true
+        type: choice
+        options:
+          - mars
+          - moon
+          - venus
+          - jupiter
+          - sun
+      date_utc:
+        description: "UTC date YYYY-MM-DD"
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - 'm45-st48/**'
+      - '.github/workflows/m45-st48.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st48 -p 'test_*.py'
+      - name: Fetch JPL Horizons ephemeris (manual dispatch only)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          TARGET: ${{ inputs.target }}
+          DATE_UTC: ${{ inputs.date_utc }}
+        run: python3 m45-st48/observatory.py --target "$TARGET" --date "$DATE_UTC" --out m45-st48-horizons.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        with:
+          name: m45-st48-horizons-data
+          path: m45-st48-horizons.json
+          retention-days: 7
