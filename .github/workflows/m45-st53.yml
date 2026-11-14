@@ -1,0 +1,24 @@
+name: M45 ST53 Observational Transform Algebra
+on:
+  push:
+    paths:
+      - 'm45-st53/**'
+      - '.github/workflows/m45-st53.yml'
+  pull_request:
+    paths:
+      - 'm45-st53/**'
+      - '.github/workflows/m45-st53.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st53 -p 'test_*.py'
+      - run: python3 m45-st53/transform_algebra.py --x 3/5 --z 4/5 --word HZ
