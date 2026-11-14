@@ -1,0 +1,43 @@
+name: M45 ST30 Persistent Tape
+on:
+  workflow_dispatch:
+    inputs:
+      steps:
+        description: 'TM transitions in this batch (1-1000)'
+        required: true
+        default: '100'
+permissions:
+  contents: write
+concurrency:
+  group: m45-st30-persistent-main
+  cancel-in-progress: false
+jobs:
+  advance:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate and run bounded TM batch
+        env:
+          STEPS: ${{ inputs.steps }}
+        run: |
+          python3 -m unittest discover -s m45-st30 -p 'test_*.py'
+          python3 m45-st30/advance.py --steps "$STEPS"
+      - name: Commit only tape and journal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- m45-st30/state.json m45-st30/journal.jsonl
+          if git diff --cached --quiet; then
+            echo "No state changes"
+          else
+            git commit -m "M45-ST30: advance persisted TM state [skip ci]"
+            git push origin HEAD:main
+          fi
