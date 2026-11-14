@@ -9,13 +9,14 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  pull-requests: write
-  issues: write
 jobs:
   self-assignment:
     # Never check out or execute pull-request code in this privileged workflow.
     if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.user.login == github.repository_owner && !github.event.pull_request.draft && !github.event.pull_request.merged }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     timeout-minutes: 5
     steps:
       - name: Assign owner-authored ready PR to repository owner
