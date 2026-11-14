@@ -45,3 +45,4 @@ jobs:
         with:
           python-version: '3.11'
       - run: python3 -m unittest discover -s m45-st86 -p 'test_*.py'
+      - run: node m45-st86/test_assignment_guard.cjs
