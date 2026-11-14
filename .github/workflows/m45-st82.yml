@@ -1,0 +1,65 @@
+name: M45 ST82 Scientific Evidence Ledger
+on:
+  push:
+    paths:
+      - 'm45-st64/**'
+      - 'm45-st68/**'
+      - 'm45-st69/**'
+      - 'm45-st73/**'
+      - 'm45-st74/**'
+      - 'm45-st75/**'
+      - 'm45-st76/**'
+      - 'm45-st77/**'
+      - 'm45-st78/**'
+      - 'm45-st79/**'
+      - 'm45-st80/**'
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - '.github/workflows/m45-st82.yml'
+  pull_request:
+    paths:
+      - 'm45-st64/**'
+      - 'm45-st68/**'
+      - 'm45-st69/**'
+      - 'm45-st73/**'
+      - 'm45-st74/**'
+      - 'm45-st75/**'
+      - 'm45-st76/**'
+      - 'm45-st77/**'
+      - 'm45-st78/**'
+      - 'm45-st79/**'
+      - 'm45-st80/**'
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - '.github/workflows/m45-st82.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests for evidence ledger
+        run: python3 -m unittest discover -s m45-st82 -p 'test_*.py'
+      - name: Generate ST81 audit (preserve failures as evidence)
+        id: audit
+        continue-on-error: true
+        run: python3 m45-st81/reproducibility_audit.py --run-tests --output m45-st81-audit.json
+      - name: Generate conservative evidence ledger
+        run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --output m45-st82-ledger.json
+      - name: Upload both reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m45-st82-evidence
+          path: |
+            m45-st81-audit.json
+            m45-st82-ledger.json
+          if-no-files-found: ignore
+      - name: Enforce full audit coverage
+        run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --require-verified > /dev/null
