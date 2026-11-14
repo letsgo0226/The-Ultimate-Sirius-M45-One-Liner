@@ -15,9 +15,9 @@ class TestModelEvolution(unittest.TestCase):
             if name!="stationary":
                 self.assertEqual(len(g[name]),625)
     def test_mutation_locality(self):
-        base=(.55,.05,.15,0.,0.,0.)
-        variants={"science_drift":(.55,.05,.15,.3,0.,0.),
-                  "reference_zero_drift":(.55,.05,.15,0.,.3,0.),
+        base=(.55,.05,.25,0.,0.,0.)
+        variants={"science_drift":(.55,.05,.25,.3,0.,0.),
+                  "reference_zero_drift":(.55,.05,.25,0.,.3,0.),
                   "reference_one_drift":(.55,.05,.25,0.,0.,.2)}
         for name,h in variants.items():
             for action in m.ACTIONS:
