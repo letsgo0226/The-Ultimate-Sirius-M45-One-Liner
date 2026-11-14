@@ -1,0 +1,32 @@
+name: M45 ST74 Active Learning Benchmark
+on:
+  push:
+    paths:
+      - 'm45-st74/**'
+      - 'm45-st73/adaptive_design.py'
+      - 'm45-st69/observer_estimation.py'
+      - 'm45-st68/quantum_metrology.py'
+      - 'm45-st64/frame_switch.py'
+      - '.github/workflows/m45-st74.yml'
+  pull_request:
+    paths:
+      - 'm45-st74/**'
+      - 'm45-st73/adaptive_design.py'
+      - 'm45-st69/observer_estimation.py'
+      - 'm45-st68/quantum_metrology.py'
+      - 'm45-st64/frame_switch.py'
+      - '.github/workflows/m45-st74.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st74 -p 'test_*.py'
+      - run: python3 m45-st74/active_learning_benchmark.py --replications 100 --budget 1200 --batch 50
