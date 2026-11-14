@@ -1,0 +1,37 @@
+name: M45 ST32 SK Tape Bridge
+on:
+  workflow_dispatch:
+    inputs:
+      expression:
+        description: 'Prefix SK expression (S, K, @)'
+        required: true
+        default: '@@@SKKS'
+      steps:
+        description: 'Reduction budget 0..100'
+        required: true
+        default: '30'
+  pull_request:
+    paths:
+      - 'm45-st32/**'
+      - '.github/workflows/m45-st32-sk.yml'
+permissions:
+  contents: read
+jobs:
+  sk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st32 -p 'test_*.py'
+      - name: Generate and replay certificate
+        env:
+          EXPR: ${{ inputs.expression || '@@@SKKS' }}
+          STEPS: ${{ inputs.steps || '30' }}
+        run: python3 m45-st32/sk_tape.py --expression "$EXPR" --steps "$STEPS" --out m45-st32-certificate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st32-sk-certificate
+          path: m45-st32-certificate.json
