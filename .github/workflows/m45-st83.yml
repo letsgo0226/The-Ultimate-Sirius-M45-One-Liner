@@ -1,0 +1,43 @@
+name: M45 ST83 Epistemic Self-Correction
+on:
+  push:
+    paths:
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - 'm45-st83/**'
+      - '.github/workflows/m45-st83.yml'
+  pull_request:
+    paths:
+      - 'm45-st81/**'
+      - 'm45-st82/**'
+      - 'm45-st83/**'
+      - '.github/workflows/m45-st83.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  correction-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st83 -p 'test_*.py'
+      - name: Produce audit even if some stages fail
+        continue-on-error: true
+        run: python3 m45-st81/reproducibility_audit.py --run-tests --output m45-st81-audit.json
+      - run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --output m45-st82-ledger.json
+      - run: python3 m45-st83/epistemic_correction.py --ledger m45-st82-ledger.json --output m45-st83-plan.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m45-st83-advisory-evidence
+          path: |
+            m45-st81-audit.json
+            m45-st82-ledger.json
+            m45-st83-plan.json
+          if-no-files-found: ignore
+      - name: Require passing upstream execution evidence
+        run: python3 m45-st82/evidence_ledger.py --audit m45-st81-audit.json --require-verified > /dev/null
