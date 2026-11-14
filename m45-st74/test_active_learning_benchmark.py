@@ -24,7 +24,7 @@ class TestActiveLearningBenchmark(unittest.TestCase):
         st73=m.load("st73","m45-st73/adaptive_design.py")
         cal=[False]*100
         sci=[True]*100
-        kwargs=(20,100,math.log(4*100/.05),.001,.3,st73)
+        kwargs=(20,100,math.log(4*100/.05),math.pi,.3,st73)
         a=m.run_policy("balanced",cal,sci,*kwargs)
         b=m.run_policy("science_heavy",cal,sci,*kwargs)
         self.assertEqual(a["trials_used"],b["trials_used"])
