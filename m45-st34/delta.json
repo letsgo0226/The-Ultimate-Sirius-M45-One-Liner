@@ -31,22 +31,41 @@
       "S": [
         "S",
         "R",
-        "checkS"
+        "q4S"
       ],
       "K": [
         "K",
         "R",
-        "checkK"
+        "q4K"
       ]
     },
-    "checkS": {
+    "q4S": {
       "S": [
         "S",
+        "R",
+        "endS"
+      ],
+      "K": [
+        "K",
+        "R",
+        "endS"
+      ]
+    },
+    "endS": {
+      "_": [
+        "_",
+        "L",
+        "eraseYS"
+      ]
+    },
+    "eraseYS": {
+      "S": [
+        "_",
         "L",
         "eraseXS"
       ],
       "K": [
-        "K",
+        "_",
         "L",
         "eraseXS"
       ]
@@ -75,37 +94,37 @@
     "writeS": {
       "@": [
         "S",
-        "R",
-        "eraseYS"
-      ]
-    },
-    "eraseYS": {
-      "_": [
-        "_",
-        "R",
-        "eraseLastS"
-      ]
-    },
-    "eraseLastS": {
-      "S": [
-        "_",
-        "L",
-        "HALT"
-      ],
-      "K": [
-        "_",
-        "L",
+        "N",
         "HALT"
       ]
     },
-    "checkK": {
+    "q4K": {
       "S": [
         "S",
+        "R",
+        "endK"
+      ],
+      "K": [
+        "K",
+        "R",
+        "endK"
+      ]
+    },
+    "endK": {
+      "_": [
+        "_",
+        "L",
+        "eraseYK"
+      ]
+    },
+    "eraseYK": {
+      "S": [
+        "_",
         "L",
         "eraseXK"
       ],
       "K": [
-        "K",
+        "_",
         "L",
         "eraseXK"
       ]
@@ -134,26 +153,7 @@
     "writeK": {
       "@": [
         "K",
-        "R",
-        "eraseYK"
-      ]
-    },
-    "eraseYK": {
-      "_": [
-        "_",
-        "R",
-        "eraseLastK"
-      ]
-    },
-    "eraseLastK": {
-      "S": [
-        "_",
-        "L",
-        "HALT"
-      ],
-      "K": [
-        "_",
-        "L",
+        "N",
         "HALT"
       ]
     }
