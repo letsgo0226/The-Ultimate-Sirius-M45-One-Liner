@@ -1,0 +1,31 @@
+name: M45 ST44 Verified Continuity
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'm45-st44/**'
+      - 'm45-st43/**'
+      - 'm45-st42/**'
+      - '.github/workflows/m45-st44.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m unittest discover -s m45-st44 -p 'test_*.py'
+      - name: Verify bounded demo and stop
+        run: |
+          python3 m45-st43/persistent_pocket.py --file pocket.json init
+          python3 m45-st44/continuity.py --pocket pocket.json --state continuity.json --init --ticks 2
+          python3 m45-st44/continuity.py --pocket pocket.json --state continuity.json --verify-only
+          python3 m45-st44/continuity.py --pocket pocket.json --state continuity.json --stop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m45-st44-bounded-state
+          path: continuity.json
