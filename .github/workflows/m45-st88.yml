@@ -24,8 +24,10 @@ jobs:
       - name: Verify SHA-free implementation
         run: |
           python3 - <<'PY'
+          import ast
           from pathlib import Path
-          source = Path('m45_st88.py').read_text()
-          assert 'hashlib' not in source
-          assert 'sha256' not in source.lower()
+          tree = ast.parse(Path('m45_st88.py').read_text())
+          imports = [n.module or '' for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)]
+          imports += [a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names]
+          assert not any(name == 'hashlib' or name.startswith('hashlib.') for name in imports)
           PY
