@@ -1,0 +1,22 @@
+name: ST96 Offline Continuity Bridge CI
+on:
+  pull_request:
+    paths:
+      - 'st96/**'
+      - '.github/workflows/st96-offline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bounded offline tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s st96 -p 'test_*.py' -v
+          python3 -B st96/continuity_bridge.py
