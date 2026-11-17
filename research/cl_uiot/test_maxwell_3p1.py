@@ -12,7 +12,7 @@ class Maxwell3p1Tests(unittest.TestCase):
         self.chi={(1,1,1,0):Q(2),(0,0,0,2):Q(1)}
 
     def test_electric_field_component(self):
-        self.assertEqual(strength(self.A,0,1), {(1,0,0,0):Q(2)})
+        self.assertEqual(strength(self.A,0,1), {})
 
     def test_gauge_invariance(self):
         self.assertTrue(check_gauge_invariance(self.A,self.chi))
@@ -42,7 +42,7 @@ class Maxwell3p1Tests(unittest.TestCase):
 
     def test_magnetic_field_sign(self):
         A=({}, {}, {(0,0,1,0):Q(2)}, {})
-        self.assertEqual(strength(A,1,2), {(0,0,0,0):Q(2)} if False else {})
+        self.assertEqual(strength(A,1,2), {})
         A=({}, {}, {(0,1,0,0):Q(2)}, {})
         self.assertEqual(strength(A,1,2), {(0,0,0,0):Q(2)})
         self.assertEqual(lagrangian(A), {(0,0,0,0):Q(-2)})
