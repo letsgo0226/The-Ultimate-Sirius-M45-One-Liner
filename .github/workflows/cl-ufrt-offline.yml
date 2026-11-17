@@ -1,0 +1,22 @@
+name: CL-UFRT Offline Mathematical Model CI
+on:
+  pull_request:
+    paths:
+      - 'research/cl_ufrt/**'
+      - '.github/workflows/cl-ufrt-offline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run finite typed fixed-point model tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s research/cl_ufrt -p 'test_*.py' -v
+          python3 -B research/cl_ufrt/fixedpoint.py

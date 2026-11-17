@@ -1,0 +1,30 @@
+name: CL-UFRT Lean 4 Proof Check
+on:
+  pull_request:
+    paths:
+      - 'research/cl_ufrt/**'
+      - '.github/workflows/cl-ufrt-lean.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lean-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean 4 toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o /tmp/elan-init.sh
+          sh /tmp/elan-init.sh -y --default-toolchain leanprover/lean4:v4.14.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Check CL-UFRT proof with Lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          lean --version
+          lean research/cl_ufrt/CLUFRT.lean
