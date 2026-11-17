@@ -12,7 +12,7 @@ class Maxwell3p1Tests(unittest.TestCase):
         self.chi={(1,1,1,0):Q(2),(0,0,0,2):Q(1)}
 
     def test_electric_field_component(self):
-        self.assertEqual(strength(self.A,0,1), {})
+        self.assertEqual(strength(self.A,0,1), {(1,0,0,0):Q(2), (0,0,0,0):Q(-2)})
 
     def test_gauge_invariance(self):
         self.assertTrue(check_gauge_invariance(self.A,self.chi))
