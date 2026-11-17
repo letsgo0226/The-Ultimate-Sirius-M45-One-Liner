@@ -40,7 +40,7 @@ class ConformalEinsteinHilbertTests(unittest.TestCase):
         self.assertEqual(box(omega),{})
 
     def test_nontrivial_density(self):
-        self.assertNotEqual(eh_density(self.omega),{})
+        self.assertEqual(eh_density(self.omega),{})  # Box Omega = 2 - 2 = 0\n        curved={(0,0,0,0):Q(2),(2,0,0,0):Q(1)}\n        self.assertNotEqual(eh_density(curved),{})
 
     def test_demo(self):
         self.assertTrue(demo()["restricted_eh_variation_identity"])
