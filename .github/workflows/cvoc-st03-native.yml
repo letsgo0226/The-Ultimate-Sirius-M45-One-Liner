@@ -1,0 +1,22 @@
+name: CVOC ST03 Native Read-only Integration
+on:
+  pull_request:
+    paths:
+      - 'cvoc-st03/**'
+      - '.github/workflows/cvoc-st03-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify native ST30, ST38, ST43, ST44, ST47
+        run: python3 -m unittest discover -s cvoc-st03 -p 'test_*.py' -v
