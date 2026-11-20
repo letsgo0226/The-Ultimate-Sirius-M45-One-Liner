@@ -1,0 +1,5 @@
+# Wigner-Moyal correspondence for quadratic Hamiltonians
+
+In canonical order (X,Px,Y,Py), define Lambda as the Poisson bidifferential operator. The Moyal bracket (H star W - W star H)/(i hbar) has formal coefficients (-1)^r Lambda^(2r+1)/(4^r (2r+1)!) at hbar^(2r). Every term beyond r=0 vanishes for quadratic H, since at least three derivatives of H are required. Thus the Wigner transport equation dW/du={H,W} is exactly the classical Liouville equation, including time-dependent K. On suitable Schwartz data the solution is W(u,z)=W(s,F_su^-1 z), using the symplectic flow. Wigner functions need not be nonnegative and admissible quantum states are not arbitrary classical densities. This is not a general equivalence of quantum and classical mechanics.
+
+The implementation computes exact polynomial coefficients, not physical normalized Wigner states or wavefunction propagation. Cubic symbols X^3 and Px^3 give the nonzero hbar² correction -3/2, providing a boundary counterexample. No general nonpolynomial star-product convergence claim. No merge or deployment.
