@@ -1,0 +1,35 @@
+name: CL-UIOT Lean
+on:
+  push:
+    branches: [feature/cl-uiot-invariant-operator]
+    paths:
+      - research/cl_uiot/GCAPO.lean
+      - research/cl_uiot/lean-toolchain
+      - research/cl_uiot/lakefile.toml
+      - .github/workflows/cl-uiot-lean.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install elan
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y elan
+      - name: Build foundational proofs
+        working-directory: research/cl_uiot
+        run: |
+          set -eu
+          lean --version
+          lake update
+          lake exe cache get
+          lake build GCAPO
+          printf 'import GCAPO\n#print axioms CLUIOT.diagonal\n#print axioms CLUIOT.radial_factor\n#print axioms CLUIOT.physical_sorted_constraint\n#print axioms CLUIOT.physical_x_bounds\n#print axioms CLUIOT.complement_identity\n#print axioms CLUIOT.complement_mono\n' > Audit.lean
+          lake env lean Audit.lean | tee audit.log
+          if grep -q sorryAx audit.log; then exit 1; fi
