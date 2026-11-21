@@ -30,6 +30,6 @@ jobs:
           lake update
           lake exe cache get
           lake build GCAPO
-          printf 'import GCAPO\n#print axioms CLUIOT.diagonal\n#print axioms CLUIOT.radial_factor\n#print axioms CLUIOT.physical_sorted_constraint\n#print axioms CLUIOT.physical_x_bounds\n#print axioms CLUIOT.complement_identity\n#print axioms CLUIOT.complement_mono\n' > Audit.lean
+          printf 'import GCAPO\n#print axioms CLUIOT.diagonal\n#print axioms CLUIOT.radial_factor\n#print axioms CLUIOT.physical_sorted_constraint\n#print axioms CLUIOT.physical_x_bounds\n#print axioms CLUIOT.complement_identity\n#print axioms CLUIOT.complement_mono\n#print axioms CLUIOT.bit_left\n#print axioms CLUIOT.bit_right\n#print axioms CLUIOT.embed_left\n#print axioms CLUIOT.butterfly_left\n#print axioms CLUIOT.butterfly_right\n#print axioms CLUIOT.conjugate_left\n#print axioms CLUIOT.conjugate_right\n' > Audit.lean
           lake env lean Audit.lean | tee audit.log
           if grep -q sorryAx audit.log; then exit 1; fi
