@@ -329,3 +329,51 @@ theorem ufrs_step_injective (n m : ℕ) (a b : Fin 256)
     omega
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Least significant byte first; reverse the input for the Python order.
+def ufrsEncode : List (Fin 256) → ℕ
+  | [] => 1
+  | b :: bs => ufrsStep (ufrsEncode bs) b
+
+def ufrsDecode : ℕ → ℕ → Option (List (Fin 256))
+  | 0, n => if n = 1 then some [] else none
+  | fuel + 1, n =>
+    if n = 1 then some [] else
+      let r := n % 257
+      if h : 0 < r ∧ r ≤ 256 then
+        (ufrsDecode fuel (n / 257)).map
+          (fun bs => ⟨r-1, by omega⟩ :: bs)
+      else none
+
+theorem ufrs_encode_positive (bs : List (Fin 256)) :
+    0 < ufrsEncode bs := by
+  cases bs with
+  | nil => simp [ufrsEncode]
+  | cons b bs => simp only [ufrsEncode, ufrsStep]; omega
+
+theorem ufrs_decode_encode (bs : List (Fin 256)) :
+    ufrsDecode bs.length (ufrsEncode bs) = some bs := by
+  induction bs with
+  | nil => simp [ufrsEncode, ufrsDecode]
+  | cons b bs ih =>
+    have hp := ufrs_encode_positive bs
+    have hn : ufrsStep (ufrsEncode bs) b ≠ 1 := by
+      unfold ufrsStep
+      omega
+    have hb : 0 < b.val + 1 ∧ b.val + 1 ≤ 256 := by
+      have hh := b.isLt
+      omega
+    simp only [List.length_cons, ufrsEncode, ufrsDecode, hn, if_false,
+      ufrs_step_mod, ufrs_step_div, hb, dite_true, ih, Option.map_some]
+    congr
+
+theorem ufrs_encode_injective_same_length (a b : List (Fin 256))
+    (hl : a.length = b.length) (he : ufrsEncode a = ufrsEncode b) :
+    a = b := by
+  have h := ufrs_decode_encode a
+  rw [hl, he, ufrs_decode_encode] at h
+  exact Option.some.inj h.symm
+
+end CLUIOT
