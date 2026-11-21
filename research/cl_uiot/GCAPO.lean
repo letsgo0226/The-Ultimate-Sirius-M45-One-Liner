@@ -588,3 +588,51 @@ theorem ufrs_check_unknown (a b : UfrsExpr) :
   simp [ufrsCheck]
 
 end CLUIOT
+
+namespace CLUIOT
+
+def efrcEncode (bs : List (Fin 256)) : ℕ :=
+  bs.foldl ufrsStep 1
+
+theorem efrc_fold_reverse (bs : List (Fin 256)) (acc : List (Fin 256)) :
+    bs.foldl ufrsStep (ufrsEncode acc) = ufrsEncode (bs.reverse ++ acc) := by
+  induction bs generalizing acc with
+  | nil => simp
+  | cons b bs ih =>
+    change bs.foldl ufrsStep (ufrsEncode (b :: acc)) =
+      ufrsEncode ((b :: bs).reverse ++ acc)
+    rw [ih]
+    simp [List.reverse_cons, List.append_assoc]
+
+theorem efrc_encode_order (bs : List (Fin 256)) :
+    efrcEncode bs = ufrsEncode bs.reverse := by
+  simpa [efrcEncode, ufrsEncode] using efrc_fold_reverse bs []
+
+theorem efrc_decode_extra_fuel (bs : List (Fin 256)) (extra : ℕ) :
+    ufrsDecode (bs.length + extra) (ufrsEncode bs) = some bs := by
+  induction bs with
+  | nil =>
+    cases extra <;> simp [ufrsEncode, ufrsDecode]
+  | cons b bs ih =>
+    have hp := ufrs_encode_positive bs
+    have hn : ufrsStep (ufrsEncode bs) b ≠ 1 := by
+      unfold ufrsStep
+      omega
+    have hb : 0 < b.val + 1 ∧ b.val + 1 ≤ 256 := by
+      have hh := b.isLt
+      omega
+    rw [List.length_cons, Nat.succ_add]
+    simp only [ufrsEncode, ufrsDecode, hn, if_false, ufrs_step_mod,
+      ufrs_step_div, hb, dite_true, ih, Option.map_some]
+    congr
+
+theorem efrc_bounded_roundtrip (bs : List (Fin 256)) (fuel : ℕ)
+    (h : bs.length ≤ fuel) :
+    (ufrsDecode fuel (efrcEncode bs)).map List.reverse = some bs := by
+  have he : fuel = bs.reverse.length + (fuel - bs.reverse.length) := by
+    simp only [List.length_reverse]
+    omega
+  rw [efrc_encode_order, he, efrc_decode_extra_fuel]
+  simp
+
+end CLUIOT
