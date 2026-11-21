@@ -6,10 +6,10 @@ def Physical (x y z : ℝ) : Prop :=
   0 ≤ 1+x+y+z ∧ 0 ≤ 1+x-y-z ∧
   0 ≤ 1-x+y-z ∧ 0 ≤ 1-x-y+z
 
-def component (x y z : ℝ) : ℝ :=
+noncomputable def component (x y z : ℝ) : ℝ :=
   x * (5*y^2 + 5*z^2 - x^4 - 5*y^2*z^2) / 4
 
-def radial (a : ℝ) : ℝ := (5*a^3-3*a^5)/2
+noncomputable def radial (a : ℝ) : ℝ := (5*a^3-3*a^5)/2
 
 theorem diagonal (a : ℝ) : component a a a = radial a := by
   unfold component radial
