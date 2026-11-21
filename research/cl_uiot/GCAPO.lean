@@ -843,3 +843,73 @@ theorem efrc_add_reduced_budget (a b c d : ℤ) (n m k l B : ℕ)
   exact efrc_gcd_budget _ _ B hu hv
 
 end CLUIOT
+
+namespace CLUIOT
+
+def efrcRaw (op : UfrsOp) (a b c d : ℤ) : ℤ × ℤ :=
+  match op with
+  | .add => (a*d+b*c,b*d)
+  | .sub => (a*d-b*c,b*d)
+  | .mul => (a*c,b*d)
+  | .div => (a*d,b*c)
+
+def efrcCost (op : UfrsOp) (n m k l : ℕ) : ℕ :=
+  match op with
+  | .add | .sub => max (max (n+l) (m+k)+1) (m+l)
+  | .mul => max (n+k) (m+l)
+  | .div => max (n+l) (m+k)
+
+theorem efrc_raw_budget (op : UfrsOp) (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : efrcCost op n m k l ≤ B) :
+    EfrcFits (efrcRaw op a b c d).1.natAbs B ∧
+    EfrcFits (efrcRaw op a b c d).2.natAbs B := by
+  cases op
+  · exact efrc_add_budget a b c d n m k l B ha hb hc hd hB
+  · exact efrc_sub_budget a b c d n m k l B ha hb hc hd hB
+  · exact efrc_mul_budget a b c d n m k l B ha hb hc hd hB
+  · exact efrc_div_budget a b c d n m k l B ha hb hc hd hB
+
+theorem efrc_raw_den_nonzero (op : UfrsOp) (a b c d : ℤ)
+    (hb : b ≠ 0) (hd : d ≠ 0)
+    (hc : op = .div → c ≠ 0) :
+    (efrcRaw op a b c d).2 ≠ 0 := by
+  cases op
+  · exact mul_ne_zero hb hd
+  · exact mul_ne_zero hb hd
+  · exact mul_ne_zero hb hd
+  · exact mul_ne_zero hb (hc rfl)
+
+theorem efrc_raw_semantics (op : UfrsOp) (a b c d : ℤ)
+    (hb : b ≠ 0) (hd : d ≠ 0) (hc : op = .div → c ≠ 0) :
+    ((efrcRaw op a b c d).1 : ℚ) / ((efrcRaw op a b c d).2 : ℚ) =
+      ufrsExact op ((a : ℚ)/b) ((c : ℚ)/d) := by
+  have hbq : (b : ℚ) ≠ 0 := by exact_mod_cast hb
+  have hdq : (d : ℚ) ≠ 0 := by exact_mod_cast hd
+  cases op
+  · simp only [efrcRaw, ufrsExact, Int.cast_add, Int.cast_mul]
+    field_simp
+    <;> ring
+  · simp only [efrcRaw, ufrsExact, Int.cast_sub, Int.cast_mul]
+    field_simp
+    <;> ring
+  · simp only [efrcRaw, ufrsExact, Int.cast_mul]
+    field_simp
+  · have hcq : (c : ℚ) ≠ 0 := by exact_mod_cast hc rfl
+    simp only [efrcRaw, ufrsExact, Int.cast_mul]
+    field_simp
+    <;> ring
+
+theorem efrc_uniform_reduced_budget (op : UfrsOp) (a b c d : ℤ)
+    (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : efrcCost op n m k l ≤ B) :
+    let u := (efrcRaw op a b c d).1.natAbs
+    let v := (efrcRaw op a b c d).2.natAbs
+    EfrcFits (u / Nat.gcd u v) B ∧ EfrcFits (v / Nat.gcd u v) B := by
+  obtain ⟨hu,hv⟩ := efrc_raw_budget op a b c d n m k l B ha hb hc hd hB
+  exact efrc_gcd_budget _ _ B hu hv
+
+end CLUIOT
