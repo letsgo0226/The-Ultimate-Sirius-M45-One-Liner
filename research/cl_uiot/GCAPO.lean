@@ -197,3 +197,28 @@ theorem uecs_pair_mul {R : Type*} [CommRing R]
     _ = _ := by rw [ht]; ring
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem uecs_block_bound (a b l : ℝ) (hl : l^2 ≤ 1) :
+    (-a+l*b)^2+b^2 ≤ 4*(a^2+b^2) := by
+  have h : l^2*b^2 ≤ b^2 := by
+    have h' := mul_nonneg (sub_nonneg.mpr hl) (sq_nonneg b)
+    nlinarith only [h']
+  nlinarith only [h, sq_nonneg (a+l*b), sq_nonneg a, sq_nonneg b]
+
+theorem uecs_uniform_sum (xs ys : List ℝ)
+    (h : List.Forall₂ (fun x y => y ≤ 4*x) xs ys) :
+    ys.sum ≤ 4*xs.sum := by
+  induction h with
+  | nil => simp
+  | cons hab habs ih =>
+    simp only [List.sum_cons]
+    linarith
+
+theorem uecs_sequence_involution (l : ℕ → ℚ) (v : ℕ → ℚ × ℚ) :
+    (fun k => urfcoBlock (l k) (urfcoBlock (l k) (v k))) = v := by
+  funext k
+  exact urfco_block_involution (l k) (v k)
+
+end CLUIOT
