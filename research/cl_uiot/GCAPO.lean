@@ -661,7 +661,7 @@ theorem efrc_decode_sound (fuel n : ℕ) (bs : List (Fin 256))
         cases hd : ufrsDecode fuel (n / 257) with
         | none => simp [hd] at h
         | some tail =>
-          simp only [hd, Option.map_some, Option.some.injEq] at h
+          simp [hd] at h
           subst bs
           obtain ⟨he, hl⟩ := ih _ _ hd
           constructor
