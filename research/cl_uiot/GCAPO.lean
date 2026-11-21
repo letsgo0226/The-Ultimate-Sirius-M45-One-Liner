@@ -698,3 +698,46 @@ theorem efrc_decode_reject (fuel n : ℕ) :
     | some bs => exact False.elim (h ⟨bs, efrc_decode_sound fuel n bs hd⟩)
 
 end CLUIOT
+
+namespace CLUIOT
+
+def EfrcFits (a : ℕ) (k : ℕ) : Prop := a < 2^k
+
+theorem efrc_fits_mul (a b k l : ℕ)
+    (ha : EfrcFits a k) (hb : EfrcFits b l) :
+    EfrcFits (a*b) (k+l) := by
+  unfold EfrcFits at *
+  rw [pow_add]
+  have hp : 0 < (2 : ℕ)^k := by positivity
+  calc
+    a*b ≤ (2^k)*b := Nat.mul_le_mul_right b (Nat.le_of_lt ha)
+    _ < (2^k)*(2^l) := Nat.mul_lt_mul_of_pos_left hb hp
+
+theorem efrc_fits_add (a b k : ℕ)
+    (ha : EfrcFits a k) (hb : EfrcFits b k) :
+    EfrcFits (a+b) (k+1) := by
+  unfold EfrcFits at *
+  rw [pow_succ]
+  omega
+
+theorem efrc_fits_mono (a k l : ℕ)
+    (ha : EfrcFits a k) (hkl : k ≤ l) : EfrcFits a l := by
+  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hkl
+  subst l
+  unfold EfrcFits at *
+  rw [pow_add]
+  have hp : 0 < (2 : ℕ)^d := by positivity
+  exact lt_of_lt_of_le ha (by
+    calc
+      (2 : ℕ)^k = 2^k * 1 := by simp
+      _ ≤ 2^k * 2^d := Nat.mul_le_mul_left _ (by omega))
+
+theorem efrc_cross_sum_bound (a b c d n m k l : ℕ)
+    (ha : EfrcFits a n) (hb : EfrcFits b m)
+    (hc : EfrcFits c k) (hd : EfrcFits d l) :
+    EfrcFits (a*d+b*c) (max (n+l) (m+k)+1) := by
+  apply efrc_fits_add
+  · exact efrc_fits_mono _ _ _ (efrc_fits_mul _ _ _ _ ha hd) (le_max_left _ _)
+  · exact efrc_fits_mono _ _ _ (efrc_fits_mul _ _ _ _ hb hc) (le_max_right _ _)
+
+end CLUIOT
