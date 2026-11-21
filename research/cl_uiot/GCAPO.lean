@@ -165,3 +165,35 @@ theorem urfco_projection_complete {R : Type*} [Ring R]
   abel
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Horner evaluation and its two-coefficient implementation model.
+def uecsEval {R : Type*} [Ring R] (t : R) : List R → R
+  | [] => 0
+  | a :: cs => a + uecsEval t cs * t
+
+def uecsReduce {R : Type*} [Ring R] : List R → R × R
+  | [] => (0,0)
+  | a :: cs => (a + (uecsReduce cs).2, (uecsReduce cs).1)
+
+theorem uecs_horner_refinement {R : Type*} [Ring R]
+    (t : R) (ht : t*t=1) (cs : List R) :
+    uecsEval t cs = (uecsReduce cs).1 + (uecsReduce cs).2*t := by
+  induction cs with
+  | nil => simp [uecsEval, uecsReduce]
+  | cons a cs ih =>
+    simp only [uecsEval, uecsReduce]
+    rw [ih]
+    calc
+      _ = a + (uecsReduce cs).1*t + (uecsReduce cs).2*(t*t) := by noncomm_ring
+      _ = _ := by rw [ht]; noncomm_ring
+
+theorem uecs_pair_mul {R : Type*} [CommRing R]
+    (t a b c d : R) (ht : t*t=1) :
+    (a+b*t)*(c+d*t) = (a*c+b*d)+(a*d+b*c)*t := by
+  calc
+    _ = a*c+(a*d+b*c)*t+b*d*(t*t) := by ring
+    _ = _ := by rw [ht]; ring
+
+end CLUIOT
