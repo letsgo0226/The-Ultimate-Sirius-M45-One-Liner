@@ -1,0 +1,2 @@
+# EFRC-02E: unified arithmetic model
+Previous Lean CI 44962498832 and offline CI 44962508031 passed. Added raw pair and cost definitions, four theorems for raw magnitude budgets, nonzero denominators, rational semantics and gcd-reduced magnitude bounds. 83 audit entries pending CI. Canonical signed gcd normalization semantics, Python bit_length correspondence, actual execution guard refinement and runtime bounds remain open. No approval, merge, deployment or baseline change.
