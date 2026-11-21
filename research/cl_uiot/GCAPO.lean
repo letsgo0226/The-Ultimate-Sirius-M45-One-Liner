@@ -549,3 +549,42 @@ theorem ufrs_transform_involution (v : ℕ → ℝ × ℝ) :
   · rfl
 
 end CLUIOT
+
+namespace CLUIOT
+
+inductive UfrsVerdict where
+  | proof
+  | counterexample (x : ℚ)
+  | unknown
+
+noncomputable def ufrsCheck (a b : UfrsExpr) (v : UfrsVerdict) : Prop :=
+  match v with
+  | .proof => ufrsNormalize a = ufrsNormalize b
+  | .counterexample x => ufrsEval x a ≠ ufrsEval x b
+  | .unknown => False
+
+def ufrsSpecification (a b : UfrsExpr) (v : UfrsVerdict) : Prop :=
+  match v with
+  | .proof => ∀ x : ℚ, ufrsEval x a = ufrsEval x b
+  | .counterexample x => ufrsEval x a ≠ ufrsEval x b
+  | .unknown => False
+
+theorem ufrs_check_sound (a b : UfrsExpr) (v : UfrsVerdict)
+    (h : ufrsCheck a b v) : ufrsSpecification a b v := by
+  cases v with
+  | proof =>
+    intro x
+    exact ufrs_normalize_identity a b h x
+  | counterexample x => exact h
+  | unknown => exact h
+
+theorem ufrs_check_conflict (a b : UfrsExpr) (x : ℚ)
+    (hp : ufrsCheck a b .proof)
+    (hc : ufrsCheck a b (.counterexample x)) : False := by
+  exact hc (ufrs_normalize_identity a b hp x)
+
+theorem ufrs_check_unknown (a b : UfrsExpr) :
+    ¬ ufrsCheck a b .unknown := by
+  simp [ufrsCheck]
+
+end CLUIOT
