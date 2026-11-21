@@ -276,3 +276,27 @@ theorem uecv_real_zero (rs : List ℝ) (s : ℝ) :
     simp [uecvOmega, hs, (uecv_energy_zero rs).mpr hr]
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem uecv_summable_blocks (a b l : ℕ → ℝ)
+    (hl : ∀ k, (l k)^2 ≤ 1)
+    (hv : Summable (fun k => (a k)^2 + (b k)^2)) :
+    Summable (fun k => (-a k + l k*b k)^2 + (b k)^2) := by
+  apply Summable.of_nonneg_of_le
+    (f := fun k => (-a k + l k*b k)^2 + (b k)^2)
+    (g := fun k => 4*((a k)^2 + (b k)^2))
+  · intro k
+    positivity
+  · intro k
+    exact uecs_block_bound (a k) (b k) (l k) (hl k)
+  · exact hv.mul_left 4
+
+theorem uecv_real_block_involution (a b l : ℝ) :
+    -(-a+l*b)+l*b = a := by ring
+
+theorem uecv_block_linear (a b c d l u v : ℝ) :
+    -(u*a+v*c)+l*(u*b+v*d) =
+      u*(-a+l*b)+v*(-c+l*d) := by ring
+
+end CLUIOT
