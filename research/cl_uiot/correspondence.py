@@ -22,6 +22,8 @@ def verify(record):
     try:
         if type(record) is not dict or set(record)!= {"parameters","residual","roots","state","theorem_id","prime_terms","tableau"}:
             return False
+        if type(record["parameters"]) is not tuple or len(record["parameters"])!=2:
+            return False
         l,m=record["parameters"]
         if type(l) is not Q or type(m) is not Q:
             return False
@@ -33,6 +35,11 @@ def verify(record):
         if type(record["residual"]) is not Q or record["residual"]!=c:
             return False
         expected=((Q(1,2),0,Q(0),2),) if m==0 else ((Q(1,2),-1,c,1),(Q(1,2),1,c,1))
-        return record["roots"]==expected and record["state"]==("HALT_PROOF" if m==0 else "HALT_COUNTEREXAMPLE")
+        rr=record["roots"]
+        if type(rr) is not tuple or any(type(row) is not tuple or len(row)!=4 or tuple(map(type,row))!=(Q,int,Q,int) for row in rr):
+            return False
+        if type(record["state"]) is not str:
+            return False
+        return rr==expected and record["state"]==("HALT_PROOF" if m==0 else "HALT_COUNTEREXAMPLE")
     except (ValueError,TypeError,KeyError,OverflowError):
         return False
