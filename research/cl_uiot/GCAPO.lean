@@ -41,3 +41,48 @@ theorem complement_mono (b B c C : ℝ)
   nlinarith
 
 end CLUIOT
+
+namespace CLUIOT
+
+def bitForward (p : Bool × Bool) : Bool × Bool :=
+  (Bool.xor p.1 p.2, p.1)
+
+def bitBackward (p : Bool × Bool) : Bool × Bool :=
+  (p.2, Bool.xor p.2 p.1)
+
+theorem bit_left (p : Bool × Bool) : bitBackward (bitForward p) = p := by
+  rcases p with ⟨a,b⟩
+  cases a <;> cases b <;> rfl
+
+theorem bit_right (p : Bool × Bool) : bitForward (bitBackward p) = p := by
+  rcases p with ⟨a,b⟩
+  cases a <;> cases b <;> rfl
+
+theorem embed_left {α β : Type} (a : α) (b : β) :
+    Prod.fst (a,b) = a := rfl
+
+def butterfly (p : ℚ × ℚ) : ℚ × ℚ :=
+  (p.1+p.2,p.1-p.2)
+
+def unbutterfly (p : ℚ × ℚ) : ℚ × ℚ :=
+  ((p.1+p.2)/2,(p.1-p.2)/2)
+
+theorem butterfly_left (p : ℚ × ℚ) :
+    unbutterfly (butterfly p) = p := by
+  rcases p with ⟨a,b⟩
+  apply Prod.ext <;> simp [butterfly, unbutterfly] <;> ring
+
+theorem butterfly_right (p : ℚ × ℚ) :
+    butterfly (unbutterfly p) = p := by
+  rcases p with ⟨a,b⟩
+  apply Prod.ext <;> simp [butterfly, unbutterfly] <;> ring
+
+theorem conjugate_left {α β : Type} (W : α ≃ β) (T : α ≃ α) (x : β) :
+    W (T.symm (W.symm (W (T (W.symm x))))) = x := by
+  simp
+
+theorem conjugate_right {α β : Type} (W : α ≃ β) (T : α ≃ α) (x : β) :
+    W (T (W.symm (W (T.symm (W.symm x))))) = x := by
+  simp
+
+end CLUIOT
