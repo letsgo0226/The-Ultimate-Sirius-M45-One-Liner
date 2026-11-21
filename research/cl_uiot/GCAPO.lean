@@ -222,3 +222,57 @@ theorem uecs_sequence_involution (l : ℕ → ℚ) (v : ℕ → ℚ × ℚ) :
   exact urfco_block_involution (l k) (v k)
 
 end CLUIOT
+
+namespace CLUIOT
+
+def uecvEnergy : List ℝ → ℝ
+  | [] => 0
+  | r :: rs => r^2 + uecvEnergy rs
+
+theorem uecv_energy_nonneg (rs : List ℝ) : 0 ≤ uecvEnergy rs := by
+  induction rs with
+  | nil => simp [uecvEnergy]
+  | cons r rs ih =>
+    exact add_nonneg (sq_nonneg r) ih
+
+theorem uecv_energy_zero (rs : List ℝ) :
+    uecvEnergy rs = 0 ↔ ∀ r ∈ rs, r = 0 := by
+  induction rs with
+  | nil => simp [uecvEnergy]
+  | cons r rs ih =>
+    constructor
+    · intro h
+      change r^2 + uecvEnergy rs = 0 at h
+      have hn := uecv_energy_nonneg rs
+      have hr : r = 0 := by nlinarith [sq_nonneg r]
+      have ht : uecvEnergy rs = 0 := by nlinarith [sq_nonneg r]
+      intro x hx
+      rcases List.mem_cons.mp hx with he | hm
+      · exact he.trans hr
+      · exact ih.mp ht x hm
+    · intro h
+      have hr : r = 0 := h r (by simp)
+      have ht : uecvEnergy rs = 0 :=
+        ih.mpr (fun x hx => h x (List.mem_cons_of_mem r hx))
+      simp [uecvEnergy, hr, ht]
+
+def uecvOmega (rs : List ℝ) (s : ℝ) : ℝ :=
+  (s-1/2)^2 + uecvEnergy rs
+
+theorem uecv_center_zero (rs : List ℝ) :
+    uecvOmega rs (1/2) = 0 ↔ ∀ r ∈ rs, r = 0 := by
+  simpa [uecvOmega] using uecv_energy_zero rs
+
+theorem uecv_real_zero (rs : List ℝ) (s : ℝ) :
+    uecvOmega rs s = 0 ↔ s = 1/2 ∧ ∀ r ∈ rs, r = 0 := by
+  constructor
+  · intro h
+    change (s-1/2)^2 + uecvEnergy rs = 0 at h
+    have hn := uecv_energy_nonneg rs
+    have hs : s = 1/2 := by nlinarith [sq_nonneg (s-1/2)]
+    have ht : uecvEnergy rs = 0 := by nlinarith [sq_nonneg (s-1/2)]
+    exact ⟨hs, (uecv_energy_zero rs).mp ht⟩
+  · rintro ⟨hs, hr⟩
+    simp [uecvOmega, hs, (uecv_energy_zero rs).mpr hr]
+
+end CLUIOT
