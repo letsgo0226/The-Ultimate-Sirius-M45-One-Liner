@@ -1,0 +1,4 @@
+# UECS-06: uniform energy estimates and sequence involution
+UECS-05 Lean CI 44924803410 and offline CI 44924812309 passed.
+Added candidate Lean proofs of real block squared norm bound for l^2<=1, finite energy sum bound, and pointwise rational sequence involution. Audit aims at 27 theorems. CI pending.
+For real l2, sum the block bounds on finite prefixes and take the monotone limit of nonnegative partial sums, proving the image is square summable and norm <=2. Coordinatewise involution then gives T^2=I. This is a mathematical argument, not yet a Lean construction of a continuous linear map on l2; rational sequence theorem does not enforce summability. Polynomial reduction follows for the resulting bounded operator by parity. Formal l2 extension and complex case remain open. No infinite hardware execution, merge, deployment or baseline changes.
