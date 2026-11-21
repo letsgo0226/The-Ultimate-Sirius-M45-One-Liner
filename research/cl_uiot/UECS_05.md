@@ -1,0 +1,2 @@
+# UECS-05: formal Horner model
+UECS-04 offline CI 44924229022 passed. Added Lean candidate proofs for recursive Horner evaluation vs two-coefficient reduction in any ring with t*t=1, and pair multiplication in a commutative ring. The coefficient recursion is the parity-sum model used in Python; no machine-checked link to the actual Python implementation or parser yet. Pair multiplication theorem currently has a commutative ring hypothesis, not arbitrary matrix coefficients. Audit extended to 24 theorems; new Lean CI pending. No merge, deployment or baseline change.
