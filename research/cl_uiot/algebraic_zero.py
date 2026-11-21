@@ -28,6 +28,8 @@ def residual_at(c,root):
 
 def verify(c,root):
     c=coefficient(c)
+    if type(root) is not tuple or len(root)!=4 or tuple(map(type,root))!=(Q,int,Q,int):
+        return False
     if residual_at(c,root)!=(0,0):
         return False
     return root in roots(c)
