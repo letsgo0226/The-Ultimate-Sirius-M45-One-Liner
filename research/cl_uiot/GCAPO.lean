@@ -770,3 +770,42 @@ theorem efrc_reduction_bound (a g k : ℕ)
   exact lt_of_le_of_lt (Nat.div_le_self a g) ha
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_signed_sub (a b : ℤ) (k : ℕ)
+    (ha : EfrcFits a.natAbs k) (hb : EfrcFits b.natAbs k) :
+    EfrcFits (a-b).natAbs (k+1) := by
+  rw [sub_eq_add_neg]
+  apply efrc_signed_add a (-b) k ha
+  simpa using hb
+
+theorem efrc_add_budget (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : max (max (n+l) (m+k)+1) (m+l) ≤ B) :
+    EfrcFits (a*d+b*c).natAbs B ∧ EfrcFits (b*d).natAbs B := by
+  constructor
+  · exact efrc_fits_mono _ _ _ (efrc_signed_cross a b c d n m k l ha hb hc hd)
+      (le_trans (le_max_left _ _) hB)
+  · exact efrc_fits_mono _ _ _ (efrc_signed_mul b d m l hb hd)
+      (le_trans (le_max_right _ _) hB)
+
+theorem efrc_mul_budget (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : max (n+k) (m+l) ≤ B) :
+    EfrcFits (a*c).natAbs B ∧ EfrcFits (b*d).natAbs B := by
+  exact ⟨efrc_fits_mono _ _ _ (efrc_signed_mul a c n k ha hc)
+    (le_trans (le_max_left _ _) hB),
+    efrc_fits_mono _ _ _ (efrc_signed_mul b d m l hb hd)
+    (le_trans (le_max_right _ _) hB)⟩
+
+theorem efrc_div_budget (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : max (n+l) (m+k) ≤ B) :
+    EfrcFits (a*d).natAbs B ∧ EfrcFits (b*c).natAbs B := by
+  exact efrc_mul_budget a b d c n m l k B ha hb hd hc hB
+
+end CLUIOT
