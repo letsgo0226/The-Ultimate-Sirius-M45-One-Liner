@@ -1,0 +1,2 @@
+# UFRS-01: base-257 encoding step refinement
+UECV-08 offline CI 44931702399 passed; all eight UECV stages have passed corresponding CI. Added Lean natural-number step with Fin 256 byte and quotient, remainder and joint injectivity theorems. Audit extends from 34 to 37 entries; new CI pending. This models one arithmetic encoding step, not the full Python codec, recursive decoder, sentinel validation, length limits or JSON canonicalization. Next: sequence-level refinement and decoder proof. No baseline change, approval, merge or deployment.
