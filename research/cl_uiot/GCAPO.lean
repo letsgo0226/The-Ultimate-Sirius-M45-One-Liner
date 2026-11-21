@@ -741,3 +741,32 @@ theorem efrc_cross_sum_bound (a b c d n m k l : ℕ)
   · exact efrc_fits_mono _ _ _ (efrc_fits_mul _ _ _ _ hb hc) (le_max_right _ _)
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_signed_mul (a b : ℤ) (k l : ℕ)
+    (ha : EfrcFits a.natAbs k) (hb : EfrcFits b.natAbs l) :
+    EfrcFits (a*b).natAbs (k+l) := by
+  rw [Int.natAbs_mul]
+  exact efrc_fits_mul _ _ _ _ ha hb
+
+theorem efrc_signed_add (a b : ℤ) (k : ℕ)
+    (ha : EfrcFits a.natAbs k) (hb : EfrcFits b.natAbs k) :
+    EfrcFits (a+b).natAbs (k+1) := by
+  have h := efrc_fits_add _ _ _ ha hb
+  exact lt_of_le_of_lt (Int.natAbs_add_le a b) h
+
+theorem efrc_signed_cross (a b c d : ℤ) (n m k l : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l) :
+    EfrcFits (a*d+b*c).natAbs (max (n+l) (m+k)+1) := by
+  apply efrc_signed_add
+  · exact efrc_fits_mono _ _ _ (efrc_signed_mul a d n l ha hd) (le_max_left _ _)
+  · exact efrc_fits_mono _ _ _ (efrc_signed_mul b c m k hb hc) (le_max_right _ _)
+
+theorem efrc_reduction_bound (a g k : ℕ)
+    (ha : EfrcFits a k) :
+    EfrcFits (a/g) k := by
+  exact lt_of_le_of_lt (Nat.div_le_self a g) ha
+
+end CLUIOT
