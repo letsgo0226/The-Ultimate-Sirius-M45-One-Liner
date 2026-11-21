@@ -483,3 +483,32 @@ theorem ufrs_normalize_counterexample (a b : UfrsExpr) (x : ℚ)
   exact h (ufrs_normalize_identity a b he x)
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Root-count bound is explicit in this first certificate model.
+theorem ufrs_finite_root_certificate (p : Polynomial ℚ) (s : Finset ℚ)
+    (d : ℕ) (hcount : p ≠ 0 → s.card ≤ p.natDegree)
+    (hdeg : p.natDegree ≤ d) (hsize : d < s.card) : p = 0 := by
+  by_contra hn
+  have hc := hcount hn
+  omega
+
+theorem ufrs_residual_certificate (a b : UfrsExpr) (s : Finset ℚ)
+    (d : ℕ)
+    (hcount : ufrsNormalize a - ufrsNormalize b ≠ 0 →
+      s.card ≤ (ufrsNormalize a - ufrsNormalize b).natDegree)
+    (hdeg : (ufrsNormalize a - ufrsNormalize b).natDegree ≤ d)
+    (hsize : d < s.card) (x : ℚ) :
+    ufrsEval x a = ufrsEval x b := by
+  have hz := ufrs_finite_root_certificate
+    (ufrsNormalize a - ufrsNormalize b) s d hcount hdeg hsize
+  exact ufrs_normalize_identity a b (sub_eq_zero.mp hz) x
+
+theorem ufrs_dual_consistent (a b : UfrsExpr)
+    (h : ufrsNormalize a = ufrsNormalize b) :
+    ¬ ∃ x : ℚ, ufrsEval x a ≠ ufrsEval x b := by
+  rintro ⟨x, hx⟩
+  exact hx (ufrs_normalize_identity a b h x)
+
+end CLUIOT
