@@ -118,3 +118,50 @@ theorem compatible_extension {α β : Type} (T : α → α)
     (fun p : α × β => (T p.1,p.2)) (a,b) = (T a,b) := rfl
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem urfco_zero (l m : ℝ) :
+    m^2 * (1+l^2) = 0 ↔ m = 0 := by
+  constructor
+  · intro h
+    have hp : 0 < 1+l^2 := by nlinarith [sq_nonneg l]
+    rcases mul_eq_zero.mp h with h0 | h0
+    · nlinarith [sq_nonneg m]
+    · linarith
+  · intro h
+    simp [h]
+
+theorem urfco_center (l m : ℝ) :
+    ((1/2 : ℝ)-1/2)^2 + m^2*(1+l^2) = 0 ↔ m = 0 := by
+  simpa using urfco_zero l m
+
+def urfcoBlock (l : ℚ) (v : ℚ × ℚ) : ℚ × ℚ :=
+  (-v.1+l*v.2,v.2)
+
+theorem urfco_block_involution (l : ℚ) (v : ℚ × ℚ) :
+    urfcoBlock l (urfcoBlock l v) = v := by
+  rcases v with ⟨a,b⟩
+  apply Prod.ext <;> simp [urfcoBlock] <;> ring
+
+theorem urfco_block_embed (l a : ℚ) :
+    urfcoBlock l (a,0) = (-a,0) := by
+  simp [urfcoBlock]
+
+theorem urfco_projection {R : Type*} [Ring R]
+    (t s x : R) (ht : t*t=1) (hs : s*s=1) :
+    t*(x-t*x*s)+(x-t*x*s)*s=0 := by
+  calc
+    _ = t*x-(t*t)*x*s+x*s-t*x*(s*s) := by noncomm_ring
+    _ = 0 := by rw [ht,hs]; noncomm_ring
+
+theorem urfco_projection_complete {R : Type*} [Ring R]
+    (t s a : R) (hs : s*s=1) (h : t*a+a*s=0) :
+    a-t*a*s=a+a := by
+  have h' := congrArg (fun z : R => z*s) h
+  simp only [add_mul, zero_mul, mul_assoc, hs, mul_one] at h'
+  have hh : t*(a*s) = -a := eq_neg_of_add_eq_zero_left h'
+  rw [mul_assoc, hh]
+  abel
+
+end CLUIOT
