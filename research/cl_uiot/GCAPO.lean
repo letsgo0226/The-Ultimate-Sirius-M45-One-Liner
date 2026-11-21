@@ -636,3 +636,65 @@ theorem efrc_bounded_roundtrip (bs : List (Fin 256)) (fuel : ℕ)
   simp
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_decode_sound (fuel n : ℕ) (bs : List (Fin 256))
+    (h : ufrsDecode fuel n = some bs) :
+    ufrsEncode bs = n ∧ bs.length ≤ fuel := by
+  induction fuel generalizing n bs with
+  | zero =>
+    by_cases hn : n = 1
+    · subst n
+      simp [ufrsDecode] at h
+      subst bs
+      simp [ufrsEncode]
+    · simp [ufrsDecode, hn] at h
+  | succ fuel ih =>
+    by_cases hn : n = 1
+    · subst n
+      simp [ufrsDecode] at h
+      subst bs
+      simp [ufrsEncode]
+    · by_cases hr : 0 < n % 257 ∧ n % 257 ≤ 256
+      · simp only [ufrsDecode, hn, if_false, hr, dite_true] at h
+        cases hd : ufrsDecode fuel (n / 257) with
+        | none => simp [hd] at h
+        | some tail =>
+          simp only [hd, Option.map_some, Option.some.injEq] at h
+          subst bs
+          obtain ⟨he, hl⟩ := ih _ _ hd
+          constructor
+          · simp only [ufrsEncode, ufrsStep, he]
+            have hm := Nat.mod_add_div n 257
+            omega
+          · simp only [List.length_cons]
+            omega
+      · simp [ufrsDecode, hn, hr] at h
+
+theorem efrc_decode_iff (fuel n : ℕ) (bs : List (Fin 256)) :
+    ufrsDecode fuel n = some bs ↔
+      ufrsEncode bs = n ∧ bs.length ≤ fuel := by
+  constructor
+  · exact efrc_decode_sound fuel n bs
+  · rintro ⟨he, hl⟩
+    rw [← he]
+    have hf : fuel = bs.length + (fuel - bs.length) := by omega
+    rw [hf]
+    exact efrc_decode_extra_fuel bs _
+
+theorem efrc_decode_reject (fuel n : ℕ) :
+    ufrsDecode fuel n = none ↔
+      ¬ ∃ bs : List (Fin 256), ufrsEncode bs = n ∧ bs.length ≤ fuel := by
+  constructor
+  · intro h hex
+    obtain ⟨bs, hb⟩ := hex
+    have hs := (efrc_decode_iff fuel n bs).mpr hb
+    rw [h] at hs
+    cases hs
+  · intro h
+    cases hd : ufrsDecode fuel n with
+    | none => rfl
+    | some bs => exact False.elim (h ⟨bs, efrc_decode_sound fuel n bs hd⟩)
+
+end CLUIOT
