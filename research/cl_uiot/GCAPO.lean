@@ -377,3 +377,64 @@ theorem ufrs_encode_injective_same_length (a b : List (Fin 256))
   exact Option.some.inj h.symm
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem ufrs_encode_injective (a b : List (Fin 256))
+    (h : ufrsEncode a = ufrsEncode b) : a = b := by
+  induction a generalizing b with
+  | nil =>
+    cases b with
+    | nil => rfl
+    | cons y ys =>
+      have hp := ufrs_encode_positive ys
+      simp only [ufrsEncode, ufrsStep] at h
+      omega
+  | cons x xs ih =>
+    cases b with
+    | nil =>
+      have hp := ufrs_encode_positive xs
+      simp only [ufrsEncode, ufrsStep] at h
+      omega
+    | cons y ys =>
+      change ufrsStep (ufrsEncode xs) x = ufrsStep (ufrsEncode ys) y at h
+      obtain ⟨ht, hh⟩ := ufrs_step_injective _ _ _ _ h
+      rw [hh, ih ys ht]
+
+inductive UfrsOp where
+  | add | sub | mul | div
+
+def ufrsExact (op : UfrsOp) (a b : ℚ) : ℚ :=
+  match op with
+  | .add => a+b
+  | .sub => a-b
+  | .mul => a*b
+  | .div => a/b
+
+def ufrsGuard (op : UfrsOp) (a b : ℚ) (cost budget : ℕ) : Option ℚ :=
+  if cost ≤ budget then
+    match op with
+    | .div => if b = 0 then none else some (ufrsExact op a b)
+    | _ => some (ufrsExact op a b)
+  else none
+
+theorem ufrs_guard_sound (op : UfrsOp) (a b v : ℚ) (cost budget : ℕ)
+    (h : ufrsGuard op a b cost budget = some v) :
+    v = ufrsExact op a b := by
+  by_cases hc : cost ≤ budget
+  · cases op <;> simp [ufrsGuard, hc] at h
+    · exact h.symm
+    · exact h.symm
+    · exact h.symm
+    · by_cases hz : b = 0 <;> simp_all
+  · simp [ufrsGuard, hc] at h
+
+theorem ufrs_guard_over_budget (op : UfrsOp) (a b : ℚ) (cost budget : ℕ)
+    (h : budget < cost) : ufrsGuard op a b cost budget = none := by
+  simp [ufrsGuard, Nat.not_le.mpr h]
+
+theorem ufrs_guard_div_zero (a : ℚ) (cost budget : ℕ) :
+    ufrsGuard .div a 0 cost budget = none := by
+  by_cases h : cost ≤ budget <;> simp [ufrsGuard, h]
+
+end CLUIOT
