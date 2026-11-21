@@ -512,3 +512,40 @@ theorem ufrs_dual_consistent (a b : UfrsExpr)
   exact hx (ufrs_normalize_identity a b h x)
 
 end CLUIOT
+
+namespace CLUIOT
+
+def UfrsSquareSummable (v : ℕ → ℝ × ℝ) : Prop :=
+  Summable (fun k => (v k).1^2 + (v k).2^2)
+
+noncomputable def ufrsCoupling (k : ℕ) : ℝ := 1 / ((k : ℝ)+1)
+
+theorem ufrs_coupling_bound (k : ℕ) : (ufrsCoupling k)^2 ≤ 1 := by
+  have h : (1 : ℝ) ≤ (k : ℝ)+1 := by
+    have hk : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
+    linarith
+  have hp : (0 : ℝ) < (k : ℝ)+1 := by positivity
+  have h1 : ufrsCoupling k ≤ 1 := by
+    unfold ufrsCoupling
+    exact (div_le_iff₀ hp).2 (by linarith)
+  have h0 : 0 ≤ ufrsCoupling k := by unfold ufrsCoupling; positivity
+  nlinarith [mul_nonneg h0 (sub_nonneg.mpr h1)]
+
+noncomputable def ufrsTransform (v : ℕ → ℝ × ℝ) : ℕ → ℝ × ℝ :=
+  fun k => (-(v k).1 + ufrsCoupling k * (v k).2, (v k).2)
+
+theorem ufrs_transform_closed (v : ℕ → ℝ × ℝ)
+    (h : UfrsSquareSummable v) : UfrsSquareSummable (ufrsTransform v) := by
+  exact uecv_summable_blocks (fun k => (v k).1) (fun k => (v k).2)
+    ufrsCoupling ufrs_coupling_bound h
+
+theorem ufrs_transform_involution (v : ℕ → ℝ × ℝ) :
+    ufrsTransform (ufrsTransform v) = v := by
+  funext k
+  apply Prod.ext
+  · change -(-(v k).1 + ufrsCoupling k * (v k).2) +
+        ufrsCoupling k * (v k).2 = (v k).1
+    ring
+  · rfl
+
+end CLUIOT
