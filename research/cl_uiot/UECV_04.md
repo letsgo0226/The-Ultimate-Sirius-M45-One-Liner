@@ -1,0 +1,2 @@
+# UECV-04: finite residual zero correspondence
+UECV-03 CI 44926962276 passed. Added recursive real list energy, nonnegativity, equivalence of zero energy and all coefficients zero, center-zero equivalence and real zero characterization. Four new theorem statements added to axiom audit (31 total); CI pending. Real-variable surrogate only; complex roots and Python refinement are not formalized here. No Riemann hypothesis or physical entropy claim. No baseline change, merge or deployment.
