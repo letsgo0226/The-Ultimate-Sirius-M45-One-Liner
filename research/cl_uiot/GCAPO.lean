@@ -300,3 +300,32 @@ theorem uecv_block_linear (a b c d l u v : ℝ) :
       u*(-a+l*b)+v*(-c+l*d) := by ring
 
 end CLUIOT
+
+namespace CLUIOT
+
+def ufrsStep (n : ℕ) (b : Fin 256) : ℕ :=
+  257*n + b.val + 1
+
+theorem ufrs_step_div (n : ℕ) (b : Fin 256) :
+    ufrsStep n b / 257 = n := by
+  have hb := b.isLt
+  unfold ufrsStep
+  omega
+
+theorem ufrs_step_mod (n : ℕ) (b : Fin 256) :
+    ufrsStep n b % 257 = b.val + 1 := by
+  have hb := b.isLt
+  unfold ufrsStep
+  omega
+
+theorem ufrs_step_injective (n m : ℕ) (a b : Fin 256)
+    (h : ufrsStep n a = ufrsStep m b) : n = m ∧ a = b := by
+  constructor
+  · have hd := congrArg (fun x : ℕ => x / 257) h
+    simpa only [ufrs_step_div] using hd
+  · apply Fin.ext
+    have hm := congrArg (fun x : ℕ => x % 257) h
+    simp only [ufrs_step_mod] at hm
+    omega
+
+end CLUIOT
