@@ -1,0 +1,2 @@
+# UFRS-02: finite sequence roundtrip
+UFRS-01 Lean 44933036193 and offline 44933042374 passed. Added a least-significant-byte-first recursive encoder and fuel-bounded decoder; reverse input/output to match Python byte order. Three Lean statements: positivity, roundtrip with fuel equal to length, and same-length injectivity. New CI pending. This does not yet prove different-length injectivity, arbitrary-code rejection equivalence, fuel sufficiency derived from n alone, or Python refinement including limits. No merge or deployment or baseline change.
