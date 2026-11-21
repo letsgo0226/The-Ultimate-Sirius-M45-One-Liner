@@ -1,0 +1,2 @@
+# ACRRO-07: foundational Lean identities
+ACRRO-06 passed CI 44919172552. Seven candidate theorems added to GCAPO.lean: Boolean gate inverse both ways, product projection, rational butterfly inverse both ways, and abstract equivalence conjugation inverse both ways. Existing Lean workflow audits their axioms. Compilation pending. These are foundational identities, not formal verification of Python, cyclic head transitions, arbitrary-dimensional Walsh transform, integer spectral image, or graph projector completeness. No merge or deployment.

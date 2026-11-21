@@ -1,0 +1,2 @@
+# UFRS-06: concrete square-summable sequence operator
+UFRS-05 Lean CI 44937669358 and offline 44937678804 passed. Added reciprocal coupling 1/(k+1) on zero-based real pair sequences, square-summability closure and involution. Three new audit entries, total 53, CI pending. This is a sequence-level specification, not yet a Mathlib Hilbert-space ContinuousLinearMap or formal operator norm bound. UFRS-05 root-count premise remains outstanding. No physical independence, approval, merge, deployment or baseline change.

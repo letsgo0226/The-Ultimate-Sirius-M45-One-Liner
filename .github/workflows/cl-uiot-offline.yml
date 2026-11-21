@@ -1,0 +1,20 @@
+name: CL-UIOT Offline Operator Tests
+on:
+  pull_request:
+    paths:
+      - 'research/cl_uiot/**'
+      - '.github/workflows/cl-uiot-offline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bounded algebraic regression tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s research/cl_uiot -p 'test_*.py' -v
+          python3 -B research/cl_uiot/invariant_operator.py

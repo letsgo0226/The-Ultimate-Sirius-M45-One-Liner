@@ -1,0 +1,5 @@
+# Rosen to Brinkmann extension
+
+Let u=t-z, v=t+z. The Brinkmann metric is du dV-dX²-dY²+H du² with H=K(u)(X²-Y²). Its inverse is exact by the null rank-one update formula, and its determinant in (t,X,Y,z) is -1 by the determinant lemma. Direct curvature gives R_uiuj=-H_ij/2, Ricci_uu=(H_XX+H_YY)/2, hence exact vacuum for this H. Nonzero K gives nonzero Riemann curvature.
+
+On a patch with AB nonzero set X=A x, Y=B y, V=v+A A' x²+B B' y². Substitution cancels mixed terms; the remaining du² coefficients are A(A''+KA)x²+B(B''-KB)y², zero for the prior Rosen ODEs. Where A or B vanishes this transformation is not invertible, but the Brinkmann metric remains nondegenerate for finite continuous K (smooth K for classical smooth geometry). For polynomial K it is smooth on all R^4. This is an explicit extension of the represented patch, not proof of geodesic completeness or arbitrary spacetime extension. Tests include finite-order Einstein checks and algebraic pullback coefficient checks; determinant formula is analytical, not an independent numerical determinant calculation. No merge or deployment.

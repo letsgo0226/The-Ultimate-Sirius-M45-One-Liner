@@ -1,0 +1,2 @@
+# UFRS-03: guarded rational semantics
+UFRS-02 Lean CI 44933558116 and offline 44933573735 passed. Added unrestricted finite sequence encoding injectivity and three guarded rational operation laws: successful result agrees with exact semantics, over-budget rejection, zero-divisor rejection. Cost is an abstract natural-number input, not a verified Python bit-length bound. No proof yet of cost estimator correctness or composite expression evaluation, nor Python-to-Lean refinement. Four new audit entries, total 44, CI pending. No merge, deployment or baseline change.

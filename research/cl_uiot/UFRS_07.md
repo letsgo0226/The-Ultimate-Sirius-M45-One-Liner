@@ -1,0 +1,2 @@
+# UFRS-07: verdict gate specification
+UFRS-06 Lean CI 44938158648 and offline 44938165285 passed. Added three-way verdict type, abstract propositional acceptance predicate and semantic specification, soundness, conflict exclusion, unknown nonacceptance. 56 audit entries, CI pending. This is not executable interface refinement: no connection yet to Python serialized certificates, resource cost estimator, dual sampled verifier or complex roots. UFRS-05 root-count derivation and UFRS-06 continuous linear map remain outstanding. No approval, merge, deployment or baseline change.

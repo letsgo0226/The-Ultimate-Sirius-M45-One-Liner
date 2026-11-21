@@ -1,0 +1,35 @@
+name: CL-UIOT Lean
+on:
+  push:
+    branches: [feature/cl-uiot-invariant-operator]
+    paths:
+      - research/cl_uiot/GCAPO.lean
+      - research/cl_uiot/lean-toolchain
+      - research/cl_uiot/lakefile.toml
+      - .github/workflows/cl-uiot-lean.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install elan
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y elan
+      - name: Build foundational proofs
+        working-directory: research/cl_uiot
+        run: |
+          set -euo pipefail
+          lean --version
+          lake update
+          lake exe cache get
+          lake build GCAPO
+          printf 'import GCAPO\n#print axioms CLUIOT.diagonal\n#print axioms CLUIOT.radial_factor\n#print axioms CLUIOT.physical_sorted_constraint\n#print axioms CLUIOT.physical_x_bounds\n#print axioms CLUIOT.complement_identity\n#print axioms CLUIOT.complement_mono\n#print axioms CLUIOT.bit_left\n#print axioms CLUIOT.bit_right\n#print axioms CLUIOT.embed_left\n#print axioms CLUIOT.butterfly_left\n#print axioms CLUIOT.butterfly_right\n#print axioms CLUIOT.conjugate_left\n#print axioms CLUIOT.conjugate_right\n#print axioms CLUIOT.state_left\n#print axioms CLUIOT.state_right\n#print axioms CLUIOT.compatible_extension\n#print axioms CLUIOT.urfco_zero\n#print axioms CLUIOT.urfco_center\n#print axioms CLUIOT.urfco_block_involution\n#print axioms CLUIOT.urfco_block_embed\n#print axioms CLUIOT.urfco_projection\n#print axioms CLUIOT.urfco_projection_complete\n#print axioms CLUIOT.uecs_horner_refinement\n#print axioms CLUIOT.uecs_pair_mul\n#print axioms CLUIOT.uecs_block_bound\n#print axioms CLUIOT.uecs_uniform_sum\n#print axioms CLUIOT.uecs_sequence_involution\n#print axioms CLUIOT.uecv_energy_nonneg\n#print axioms CLUIOT.uecv_energy_zero\n#print axioms CLUIOT.uecv_center_zero\n#print axioms CLUIOT.uecv_real_zero\n#print axioms CLUIOT.uecv_summable_blocks\n#print axioms CLUIOT.uecv_real_block_involution\n#print axioms CLUIOT.uecv_block_linear\n#print axioms CLUIOT.ufrs_step_div\n#print axioms CLUIOT.ufrs_step_mod\n#print axioms CLUIOT.ufrs_step_injective\n#print axioms CLUIOT.ufrs_encode_positive\n#print axioms CLUIOT.ufrs_decode_encode\n#print axioms CLUIOT.ufrs_encode_injective_same_length\n#print axioms CLUIOT.ufrs_encode_injective\n#print axioms CLUIOT.ufrs_guard_sound\n#print axioms CLUIOT.ufrs_guard_over_budget\n#print axioms CLUIOT.ufrs_guard_div_zero\n#print axioms CLUIOT.ufrs_normalize_sound\n#print axioms CLUIOT.ufrs_normalize_identity\n#print axioms CLUIOT.ufrs_normalize_counterexample\n#print axioms CLUIOT.ufrs_finite_root_certificate\n#print axioms CLUIOT.ufrs_residual_certificate\n#print axioms CLUIOT.ufrs_dual_consistent\n#print axioms CLUIOT.ufrs_coupling_bound\n#print axioms CLUIOT.ufrs_transform_closed\n#print axioms CLUIOT.ufrs_transform_involution\n#print axioms CLUIOT.ufrs_check_sound\n#print axioms CLUIOT.ufrs_check_conflict\n#print axioms CLUIOT.ufrs_check_unknown\n' > Audit.lean
+          lake env lean Audit.lean | tee audit.log
+          if grep -q sorryAx audit.log; then exit 1; fi

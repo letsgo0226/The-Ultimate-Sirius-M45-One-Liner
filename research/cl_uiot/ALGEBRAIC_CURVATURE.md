@@ -1,0 +1,3 @@
+# Algebraic critical curvature
+
+Exact arithmetic in Q(sqrt(6)) represents the critical point without rounding. Directional polynomial jets are computed from the complete logical enumerator. The radial quadratic form on the transverse plane vanishes: test the two basis vectors (0,1,-1,0), (0,0,1,-1) and their sum (0,1,0,-1); polarization then proves the entire quadratic form is zero. By NCMO the stable graph has zero quadratic term, hence H(v)=O(||v||^3). This does not imply the graph is exactly planar, nor that component Hessians vanish. The implementation uses addition and multiplication in the quadratic field, not a general field division API. Higher-order threshold corrections and global basin classification remain open. No hardware validation, merge or deployment.
