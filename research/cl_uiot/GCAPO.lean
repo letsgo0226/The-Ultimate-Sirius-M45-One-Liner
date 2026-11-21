@@ -438,3 +438,48 @@ theorem ufrs_guard_div_zero (a : ℚ) (cost budget : ℕ) :
   by_cases h : cost ≤ budget <;> simp [ufrsGuard, h]
 
 end CLUIOT
+
+namespace CLUIOT
+
+inductive UfrsExpr where
+  | var
+  | lit (q : ℚ)
+  | add (a b : UfrsExpr)
+  | sub (a b : UfrsExpr)
+  | mul (a b : UfrsExpr)
+
+def ufrsEval (x : ℚ) : UfrsExpr → ℚ
+  | .var => x
+  | .lit q => q
+  | .add a b => ufrsEval x a + ufrsEval x b
+  | .sub a b => ufrsEval x a - ufrsEval x b
+  | .mul a b => ufrsEval x a * ufrsEval x b
+
+noncomputable def ufrsNormalize : UfrsExpr → Polynomial ℚ
+  | .var => Polynomial.X
+  | .lit q => Polynomial.C q
+  | .add a b => ufrsNormalize a + ufrsNormalize b
+  | .sub a b => ufrsNormalize a - ufrsNormalize b
+  | .mul a b => ufrsNormalize a * ufrsNormalize b
+
+theorem ufrs_normalize_sound (e : UfrsExpr) (x : ℚ) :
+    (ufrsNormalize e).eval x = ufrsEval x e := by
+  induction e with
+  | var => simp [ufrsNormalize, ufrsEval]
+  | lit q => simp [ufrsNormalize, ufrsEval]
+  | add a b ha hb => simp [ufrsNormalize, ufrsEval, ha, hb]
+  | sub a b ha hb => simp [ufrsNormalize, ufrsEval, ha, hb]
+  | mul a b ha hb => simp [ufrsNormalize, ufrsEval, ha, hb]
+
+theorem ufrs_normalize_identity (a b : UfrsExpr)
+    (h : ufrsNormalize a = ufrsNormalize b) (x : ℚ) :
+    ufrsEval x a = ufrsEval x b := by
+  rw [← ufrs_normalize_sound a x, ← ufrs_normalize_sound b x, h]
+
+theorem ufrs_normalize_counterexample (a b : UfrsExpr) (x : ℚ)
+    (h : ufrsEval x a ≠ ufrsEval x b) :
+    ufrsNormalize a ≠ ufrsNormalize b := by
+  intro he
+  exact h (ufrs_normalize_identity a b he x)
+
+end CLUIOT
