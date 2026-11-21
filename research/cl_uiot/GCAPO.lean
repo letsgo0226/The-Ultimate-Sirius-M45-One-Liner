@@ -86,3 +86,35 @@ theorem conjugate_right {α β : Type} (W : α ≃ β) (T : α ≃ α) (x : β) 
   simp
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Abstract complete state: a bijective local update followed by a
+-- head permutation selected by the updated data.
+def stateForward {H D : Type} (U : H → D ≃ D)
+    (M : D → H ≃ H) (s : H × D) : H × D :=
+  let d := U s.1 s.2
+  (M d s.1, d)
+
+def stateBackward {H D : Type} (U : H → D ≃ D)
+    (M : D → H ≃ H) (s : H × D) : H × D :=
+  let h := (M s.2).symm s.1
+  (h, (U h).symm s.2)
+
+theorem state_left {H D : Type} (U : H → D ≃ D)
+    (M : D → H ≃ H) (s : H × D) :
+    stateBackward U M (stateForward U M s) = s := by
+  rcases s with ⟨h,d⟩
+  simp [stateForward, stateBackward]
+
+theorem state_right {H D : Type} (U : H → D ≃ D)
+    (M : D → H ≃ H) (s : H × D) :
+    stateForward U M (stateBackward U M s) = s := by
+  rcases s with ⟨h,d⟩
+  simp [stateForward, stateBackward]
+
+theorem compatible_extension {α β : Type} (T : α → α)
+    (a : α) (b : β) :
+    (fun p : α × β => (T p.1,p.2)) (a,b) = (T a,b) := rfl
+
+end CLUIOT
