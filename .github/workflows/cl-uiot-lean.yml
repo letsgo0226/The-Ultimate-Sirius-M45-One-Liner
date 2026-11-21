@@ -25,7 +25,7 @@ jobs:
       - name: Build foundational proofs
         working-directory: research/cl_uiot
         run: |
-          set -eu
+          set -euo pipefail
           lean --version
           lake update
           lake exe cache get
