@@ -284,8 +284,8 @@ theorem uecv_summable_blocks (a b l : ℕ → ℝ)
     (hv : Summable (fun k => (a k)^2 + (b k)^2)) :
     Summable (fun k => (-a k + l k*b k)^2 + (b k)^2) := by
   apply Summable.of_nonneg_of_le
-    (f := fun k => (-a k + l k*b k)^2 + (b k)^2)
-    (g := fun k => 4*((a k)^2 + (b k)^2))
+    (g := fun k => (-a k + l k*b k)^2 + (b k)^2)
+    (f := fun k => 4*((a k)^2 + (b k)^2))
   · intro k
     positivity
   · intro k
