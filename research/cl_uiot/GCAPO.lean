@@ -809,3 +809,37 @@ theorem efrc_div_budget (a b c d : ℤ) (n m k l B : ℕ)
   exact efrc_mul_budget a b d c n m l k B ha hb hd hc hB
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_sub_budget (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : max (max (n+l) (m+k)+1) (m+l) ≤ B) :
+    EfrcFits (a*d-b*c).natAbs B ∧ EfrcFits (b*d).natAbs B := by
+  have h := efrc_add_budget a b (-c) d n m k l B ha hb
+    (by simpa using hc) hd hB
+  simpa [mul_neg, sub_eq_add_neg] using h
+
+theorem efrc_reduce_pair (a b g B : ℕ)
+    (ha : EfrcFits a B) (hb : EfrcFits b B) :
+    EfrcFits (a/g) B ∧ EfrcFits (b/g) B :=
+  ⟨efrc_reduction_bound a g B ha, efrc_reduction_bound b g B hb⟩
+
+theorem efrc_gcd_budget (a b B : ℕ)
+    (ha : EfrcFits a B) (hb : EfrcFits b B) :
+    EfrcFits (a / Nat.gcd a b) B ∧
+    EfrcFits (b / Nat.gcd a b) B :=
+  efrc_reduce_pair a b (Nat.gcd a b) B ha hb
+
+theorem efrc_add_reduced_budget (a b c d : ℤ) (n m k l B : ℕ)
+    (ha : EfrcFits a.natAbs n) (hb : EfrcFits b.natAbs m)
+    (hc : EfrcFits c.natAbs k) (hd : EfrcFits d.natAbs l)
+    (hB : max (max (n+l) (m+k)+1) (m+l) ≤ B) :
+    let u := (a*d+b*c).natAbs
+    let v := (b*d).natAbs
+    EfrcFits (u / Nat.gcd u v) B ∧ EfrcFits (v / Nat.gcd u v) B := by
+  obtain ⟨hu, hv⟩ := efrc_add_budget a b c d n m k l B ha hb hc hd hB
+  exact efrc_gcd_budget _ _ B hu hv
+
+end CLUIOT
