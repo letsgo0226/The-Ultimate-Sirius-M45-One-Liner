@@ -256,7 +256,7 @@ theorem uecv_energy_zero (rs : List ℝ) :
         ih.mpr (fun x hx => h x (List.mem_cons_of_mem r hx))
       simp [uecvEnergy, hr, ht]
 
-def uecvOmega (rs : List ℝ) (s : ℝ) : ℝ :=
+noncomputable def uecvOmega (rs : List ℝ) (s : ℝ) : ℝ :=
   (s-1/2)^2 + uecvEnergy rs
 
 theorem uecv_center_zero (rs : List ℝ) :
