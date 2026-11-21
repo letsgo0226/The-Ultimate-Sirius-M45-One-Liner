@@ -1,0 +1,5 @@
+# GFECO: budgeted global finite-entry cover
+
+Each leaf is either a FICCO convergence certificate or unresolved. Simplex-intersected bisections cover their parent; exhausted budget retains all pending nodes. By induction the leaves cover the root. If complete is true, every physical state in the root converges to one of the nine fixed points by FICCO. A full root is [0,1]^4 intersected with the probability simplex. Replay verifies a record using the same implementation, not an independent proof checker.
+
+Conditional termination theorem: if every point eventually enters a strict open certificate target (central basin, vertex probability >0.9, or strict invariant cone), continuity of finite iterates and compactness give a finite uniform entry horizon and positive local margins via a finite subcover. For sufficiently fine longest-side subdivision and sufficiently accurate outward arithmetic, all leaves can then be certified, using a finite budget. This does not establish the premise or a concrete global cover. Tests use a singleton and intentionally incomplete full-root runs. No merge or deployment.
