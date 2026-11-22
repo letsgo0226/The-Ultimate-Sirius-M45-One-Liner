@@ -1247,3 +1247,37 @@ theorem udlc_damage_closed (d k : ℤ) (hd : 0 ≤ d) (n : ℕ) :
       omega
 
 end CLUIOT
+
+namespace CLUIOT
+theorem udlc_damage_zero_iff (d k : ℤ) (hd : 0 ≤ d) (n : ℕ) :
+    udlcDamage d k n = 0 ↔ d + (n : ℤ)*k ≤ 0 := by
+  rw [udlc_damage_closed d k hd n]
+  constructor
+  · intro h
+    have hb := le_max_right 0 (d + (n : ℤ)*k)
+    rw [h] at hb
+    exact hb
+  · exact max_eq_left
+
+theorem udlc_damage_zero_preserved (d k : ℤ) (n : ℕ)
+    (hk : k ≤ 0) (hz : udlcDamage d k n = 0) :
+    udlcDamage d k (n+1) = 0 := by
+  rw [udlcDamage, hz, zero_add, max_eq_left hk]
+
+theorem udlc_damage_finite_zero (d k : ℤ) (hd : 0 ≤ d) (hk : k < 0) :
+    udlcDamage d k d.toNat = 0 := by
+  apply (udlc_damage_zero_iff d k hd d.toNat).2
+  rw [Int.toNat_of_nonneg hd]
+  have h : k ≤ -1 := by omega
+  have hm := mul_le_mul_of_nonneg_left h hd
+  simp at hm
+  omega
+
+theorem udlc_damage_zero_forever (d k : ℤ) (n : ℕ)
+    (hk : k ≤ 0) (hz : udlcDamage d k n = 0) (m : ℕ) :
+    udlcDamage d k (n+m) = 0 := by
+  induction m with
+  | zero => simpa using hz
+  | succ m ih =>
+    exact udlc_damage_zero_preserved d k (n+m) hk ih
+end CLUIOT
