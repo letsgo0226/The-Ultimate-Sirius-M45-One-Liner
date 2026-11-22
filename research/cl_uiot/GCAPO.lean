@@ -1032,3 +1032,71 @@ theorem efrc_poly_same_length_injective (as bs : List ℚ)
       rw [hab, ih bs hs ht]
 
 end CLUIOT
+
+namespace CLUIOT
+
+def efrcTrim : List ℚ → List ℚ
+  | [] => []
+  | a :: as =>
+    match efrcTrim as with
+    | [] => if a = 0 then [] else [a]
+    | b :: bs => a :: b :: bs
+
+theorem efrc_trim_sound (as : List ℚ) :
+    efrcPoly (efrcTrim as) = efrcPoly as := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    cases h : efrcTrim as with
+    | nil =>
+      rw [h] at ih
+      by_cases ha : a = 0
+      · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
+        rw [← ih]
+        simp
+      · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
+        rw [← ih]
+        simp
+    | cons b bs =>
+      rw [h] at ih
+      simp only [efrcTrim, h, efrcPoly]
+      rw [← ih]
+
+theorem efrc_trim_idempotent (as : List ℚ) :
+    efrcTrim (efrcTrim as) = efrcTrim as := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    cases h : efrcTrim as with
+    | nil =>
+      by_cases ha : a = 0 <;> simp [efrcTrim, h, ha]
+    | cons b bs =>
+      rw [h] at ih
+      simp [efrcTrim, h, ih]
+
+def efrcCanonical (as : List ℚ) : List ℚ :=
+  match efrcTrim as with
+  | [] => [0]
+  | b :: bs => b :: bs
+
+theorem efrc_canonical_sound (as : List ℚ) :
+    efrcPoly (efrcCanonical as) = efrcPoly as := by
+  have h := efrc_trim_sound as
+  cases ht : efrcTrim as with
+  | nil =>
+    rw [ht] at h
+    simpa [efrcCanonical, ht, efrcPoly] using h
+  | cons b bs =>
+    rw [ht] at h
+    simpa [efrcCanonical, ht] using h
+
+theorem efrc_canonical_idempotent (as : List ℚ) :
+    efrcCanonical (efrcCanonical as) = efrcCanonical as := by
+  have h := efrc_trim_idempotent as
+  cases ht : efrcTrim as with
+  | nil => simp [efrcCanonical, ht, efrcTrim]
+  | cons b bs =>
+    rw [ht] at h
+    simp [efrcCanonical, ht, h]
+
+end CLUIOT
