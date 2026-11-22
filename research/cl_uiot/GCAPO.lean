@@ -913,3 +913,34 @@ theorem efrc_uniform_reduced_budget (op : UfrsOp) (a b c d : ℤ)
   exact efrc_gcd_budget _ _ B hu hv
 
 end CLUIOT
+
+namespace CLUIOT
+
+noncomputable def efrcPoly : List ℚ → Polynomial ℚ
+  | [] => 0
+  | c :: cs => Polynomial.C c + Polynomial.X * efrcPoly cs
+
+def efrcHorner (x : ℚ) : List ℚ → ℚ
+  | [] => 0
+  | c :: cs => c + x * efrcHorner x cs
+
+theorem efrc_poly_eval (x : ℚ) (cs : List ℚ) :
+    (efrcPoly cs).eval x = efrcHorner x cs := by
+  induction cs with
+  | nil => simp [efrcPoly, efrcHorner]
+  | cons c cs ih => simp [efrcPoly, efrcHorner, ih]
+
+theorem efrc_poly_trailing_zero (cs : List ℚ) :
+    efrcPoly (cs ++ [0]) = efrcPoly cs := by
+  induction cs with
+  | nil => simp [efrcPoly]
+  | cons c cs ih => simp [efrcPoly, ih]
+
+theorem efrc_poly_literal (c : ℚ) :
+    efrcPoly [c] = Polynomial.C c := by simp [efrcPoly]
+
+theorem efrc_poly_variable :
+    efrcPoly [0,1] = (Polynomial.X : Polynomial ℚ) := by
+  simp [efrcPoly]
+
+end CLUIOT
