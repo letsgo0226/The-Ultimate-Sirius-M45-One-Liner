@@ -994,3 +994,41 @@ theorem efrc_poly_convolve (as bs : List ℚ) :
     ring
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_poly_head (a : ℚ) (as : List ℚ) :
+    (efrcPoly (a :: as)).coeff 0 = a := by
+  simp [efrcPoly, Polynomial.coeff_add, Polynomial.coeff_X_mul]
+
+theorem efrc_poly_shift (a : ℚ) (as : List ℚ) (k : ℕ) :
+    (efrcPoly (a :: as)).coeff (k+1) = (efrcPoly as).coeff k := by
+  simp [efrcPoly, Polynomial.coeff_add, Polynomial.coeff_X_mul]
+
+theorem efrc_poly_cons_injective (a b : ℚ) (as bs : List ℚ)
+    (h : efrcPoly (a :: as) = efrcPoly (b :: bs)) :
+    a = b ∧ efrcPoly as = efrcPoly bs := by
+  constructor
+  · have h0 := congrArg (fun p : Polynomial ℚ => p.coeff 0) h
+    simpa only [efrc_poly_head] using h0
+  · ext k
+    have hk := congrArg (fun p : Polynomial ℚ => p.coeff (k+1)) h
+    simpa only [efrc_poly_shift] using hk
+
+theorem efrc_poly_same_length_injective (as bs : List ℚ)
+    (hl : as.length = bs.length)
+    (h : efrcPoly as = efrcPoly bs) : as = bs := by
+  induction as generalizing bs with
+  | nil =>
+    cases bs with
+    | nil => rfl
+    | cons b bs => simp at hl
+  | cons a as ih =>
+    cases bs with
+    | nil => simp at hl
+    | cons b bs =>
+      obtain ⟨hab, ht⟩ := efrc_poly_cons_injective a b as bs h
+      have hs : as.length = bs.length := by simpa using hl
+      rw [hab, ih bs hs ht]
+
+end CLUIOT
