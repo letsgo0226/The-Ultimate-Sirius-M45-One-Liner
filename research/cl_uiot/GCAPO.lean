@@ -1102,3 +1102,49 @@ theorem efrc_canonical_idempotent (as : List ℚ) :
     simp [efrcCanonical, ht, h]
 
 end CLUIOT
+
+namespace CLUIOT
+
+theorem efrc_trim_zero (as : List ℚ) (h : efrcPoly as = 0) :
+    efrcTrim as = [] := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    have hz : efrcPoly (a :: as) = efrcPoly [0] := by
+      simpa [efrcPoly] using h
+    obtain ⟨ha, ht⟩ := efrc_poly_cons_injective a 0 as [] hz
+    have hs : efrcPoly as = 0 := by simpa [efrcPoly] using ht
+    simp [efrcTrim, ih hs, ha]
+
+theorem efrc_trim_unique (as bs : List ℚ)
+    (h : efrcPoly as = efrcPoly bs) :
+    efrcTrim as = efrcTrim bs := by
+  induction as generalizing bs with
+  | nil =>
+    have hz : efrcPoly bs = 0 := by simpa [efrcPoly] using h.symm
+    simpa only [efrcTrim] using (efrc_trim_zero bs hz).symm
+  | cons a as ih =>
+    cases bs with
+    | nil =>
+      exact efrc_trim_zero (a :: as) (by simpa [efrcPoly] using h)
+    | cons b bs =>
+      obtain ⟨hab, ht⟩ := efrc_poly_cons_injective a b as bs h
+      rw [efrcTrim, efrcTrim, hab, ih bs ht]
+
+theorem efrc_canonical_unique (as bs : List ℚ)
+    (h : efrcPoly as = efrcPoly bs) :
+    efrcCanonical as = efrcCanonical bs := by
+  unfold efrcCanonical
+  rw [efrc_trim_unique as bs h]
+
+theorem efrc_canonical_iff (as bs : List ℚ) :
+    efrcPoly as = efrcPoly bs ↔ efrcCanonical as = efrcCanonical bs := by
+  constructor
+  · exact efrc_canonical_unique as bs
+  · intro h
+    calc
+      efrcPoly as = efrcPoly (efrcCanonical as) := (efrc_canonical_sound as).symm
+      _ = efrcPoly (efrcCanonical bs) := congrArg efrcPoly h
+      _ = efrcPoly bs := efrc_canonical_sound bs
+
+end CLUIOT
