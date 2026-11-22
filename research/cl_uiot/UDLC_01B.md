@@ -1,0 +1,2 @@
+# UDLC-01B
+Baseline: Lean CI 45037198573 and offline CI 45037335322 passed (108 audit entries). Four candidate Lean theorems: conditional viability, invariant preservation, nonnegative integer damage and closed form for constant integer net loss. Pending CI (112 entries). Integer damage is an abstract toy model, not clinical data, a treatment protocol, immortality evidence or proof of subjective identity. No biological parameters calibrated. No merge, deployment or baseline change.
