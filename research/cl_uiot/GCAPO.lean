@@ -1052,8 +1052,9 @@ theorem efrc_trim_sound (as : List ℚ) :
       rw [h] at ih
       by_cases ha : a = 0
       · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
-
+        exact ih.symm
       · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
+        exact ih.symm
 
     | cons b bs =>
       rw [h] at ih
