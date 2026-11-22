@@ -1189,3 +1189,61 @@ theorem efrc_expr_canonical_counterexample (a b : UfrsExpr) (x : ℚ)
   intro he
   exact h (efrc_expr_canonical_identity a b he x)
 end CLUIOT
+
+namespace CLUIOT
+
+def udlcOrbit {X : Type} (T : ℕ → X → X) (x : X) : ℕ → X
+  | 0 => x
+  | n+1 => T n (udlcOrbit T x n)
+
+theorem udlc_viable {X : Type} (T : ℕ → X → X) (V : X → Prop)
+    (x : X) (hx : V x)
+    (hT : ∀ n y, V y → V (T n y)) (n : ℕ) :
+    V (udlcOrbit T x n) := by
+  induction n with
+  | zero => exact hx
+  | succ n ih => exact hT n _ ih
+
+theorem udlc_invariant {X Y : Type} (T : ℕ → X → X)
+    (V : X → Prop) (I : X → Y) (x : X) (hx : V x)
+    (hT : ∀ n y, V y → V (T n y))
+    (hI : ∀ n y, V y → I (T n y) = I y) (n : ℕ) :
+    I (udlcOrbit T x n) = I x := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    change I (T n (udlcOrbit T x n)) = I x
+    rw [hI n _ (udlc_viable T V x hx hT n), ih]
+
+def udlcDamage (d k : ℤ) : ℕ → ℤ
+  | 0 => d
+  | n+1 => max 0 (udlcDamage d k n + k)
+
+theorem udlc_damage_nonneg (d k : ℤ) (hd : 0 ≤ d) (n : ℕ) :
+    0 ≤ udlcDamage d k n := by
+  cases n with
+  | zero => exact hd
+  | succ n => exact le_max_left _ _
+
+theorem udlc_damage_closed (d k : ℤ) (hd : 0 ≤ d) (n : ℕ) :
+    udlcDamage d k n = max 0 (d + (n : ℤ)*k) := by
+  induction n with
+  | zero => simp [udlcDamage, max_eq_right hd]
+  | succ n ih =>
+    rw [udlcDamage, ih, Nat.cast_succ]
+    by_cases h : 0 ≤ d + (n : ℤ)*k
+    · rw [max_eq_right h]
+      congr 1
+      ring
+    · have hn : d + (n : ℤ)*k ≤ 0 := le_of_lt (lt_of_not_ge h)
+      have hk : k ≤ 0 := by
+        by_contra hp
+        have hm : 0 ≤ (n : ℤ)*k := mul_nonneg (by positivity) (le_of_lt (lt_of_not_ge hp))
+        omega
+      rw [max_eq_left hn, zero_add, max_eq_left hk]
+      apply Eq.symm
+      apply max_eq_left
+      rw [add_mul, one_mul]
+      omega
+
+end CLUIOT
