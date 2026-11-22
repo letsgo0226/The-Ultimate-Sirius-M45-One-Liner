@@ -944,3 +944,53 @@ theorem efrc_poly_variable :
   simp [efrcPoly]
 
 end CLUIOT
+
+namespace CLUIOT
+
+def efrcAdd : List ℚ → List ℚ → List ℚ
+  | [], bs => bs
+  | a :: as, [] => a :: as
+  | a :: as, b :: bs => (a+b) :: efrcAdd as bs
+
+def efrcScale (a : ℚ) (bs : List ℚ) : List ℚ :=
+  bs.map (fun b => a*b)
+
+def efrcConvolve : List ℚ → List ℚ → List ℚ
+  | [], _ => []
+  | a :: as, bs => efrcAdd (efrcScale a bs) (0 :: efrcConvolve as bs)
+
+theorem efrc_poly_add (as bs : List ℚ) :
+    efrcPoly (efrcAdd as bs) = efrcPoly as + efrcPoly bs := by
+  induction as generalizing bs with
+  | nil => simp [efrcAdd, efrcPoly]
+  | cons a as ih =>
+    cases bs with
+    | nil => simp [efrcAdd, efrcPoly]
+    | cons b bs =>
+      simp [efrcAdd, efrcPoly, ih, Polynomial.C_add]
+      ring
+
+theorem efrc_poly_scale (a : ℚ) (bs : List ℚ) :
+    efrcPoly (efrcScale a bs) = Polynomial.C a * efrcPoly bs := by
+  induction bs with
+  | nil => simp [efrcScale, efrcPoly]
+  | cons b bs ih =>
+    change efrcPoly (a*b :: efrcScale a bs) = _
+    simp [efrcPoly, ih, Polynomial.C_mul]
+    ring
+
+theorem efrc_poly_sub (as bs : List ℚ) :
+    efrcPoly (efrcAdd as (efrcScale (-1) bs)) =
+      efrcPoly as - efrcPoly bs := by
+  rw [efrc_poly_add, efrc_poly_scale]
+  simp [sub_eq_add_neg]
+
+theorem efrc_poly_convolve (as bs : List ℚ) :
+    efrcPoly (efrcConvolve as bs) = efrcPoly as * efrcPoly bs := by
+  induction as with
+  | nil => simp [efrcConvolve, efrcPoly]
+  | cons a as ih =>
+    simp [efrcConvolve, efrc_poly_add, efrc_poly_scale, efrcPoly, ih]
+    ring
+
+end CLUIOT
