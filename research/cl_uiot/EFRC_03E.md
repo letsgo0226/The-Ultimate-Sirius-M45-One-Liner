@@ -1,0 +1,2 @@
+# EFRC-03E: canonical uniqueness
+Previous Lean CI 45035628512 and offline CI 45035631743 passed (99 audit entries). Added zero-tail characterization in the forward direction, trim uniqueness, canonical uniqueness, and polynomial equality iff canonical equality. Four new audit entries pending CI (103 total). Proof uses coefficient recovery and structural induction, no equal-length restriction. Python trimming loop, coefficient indexing, AST integration and resource bounds remain open. No approval, merge, deployment or baseline change.
