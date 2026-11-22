@@ -1171,3 +1171,21 @@ theorem efrc_expr_canonical_iff (a b : UfrsExpr) :
       ufrsNormalize a = ufrsNormalize b := by
   rw [← efrc_canonical_iff, efrc_expr_coeffs_sound, efrc_expr_coeffs_sound]
 end CLUIOT
+
+namespace CLUIOT
+theorem efrc_expr_horner (e : UfrsExpr) (x : ℚ) :
+    efrcHorner x (efrcCanonical (efrcExprCoeffs e)) = ufrsEval x e := by
+  rw [← efrc_poly_eval, efrc_canonical_sound, efrc_expr_coeffs_sound]
+  exact ufrs_normalize_sound e x
+
+theorem efrc_expr_canonical_identity (a b : UfrsExpr)
+    (h : efrcCanonical (efrcExprCoeffs a) = efrcCanonical (efrcExprCoeffs b))
+    (x : ℚ) : ufrsEval x a = ufrsEval x b := by
+  rw [← efrc_expr_horner a x, ← efrc_expr_horner b x, h]
+
+theorem efrc_expr_canonical_counterexample (a b : UfrsExpr) (x : ℚ)
+    (h : ufrsEval x a ≠ ufrsEval x b) :
+    efrcCanonical (efrcExprCoeffs a) ≠ efrcCanonical (efrcExprCoeffs b) := by
+  intro he
+  exact h (efrc_expr_canonical_identity a b he x)
+end CLUIOT
