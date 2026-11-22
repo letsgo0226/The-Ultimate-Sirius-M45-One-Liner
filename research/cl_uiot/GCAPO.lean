@@ -1052,15 +1052,14 @@ theorem efrc_trim_sound (as : List ℚ) :
       rw [h] at ih
       by_cases ha : a = 0
       · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
-        rw [← ih]
-        simp
+
       · simp [efrcTrim, h, ha, efrcPoly] at ih ⊢
-        rw [← ih]
-        simp
+
     | cons b bs =>
       rw [h] at ih
       simp only [efrcTrim, h, efrcPoly]
       rw [← ih]
+      rfl
 
 theorem efrc_trim_idempotent (as : List ℚ) :
     efrcTrim (efrcTrim as) = efrcTrim as := by
@@ -1072,7 +1071,9 @@ theorem efrc_trim_idempotent (as : List ℚ) :
       by_cases ha : a = 0 <;> simp [efrcTrim, h, ha]
     | cons b bs =>
       rw [h] at ih
-      simp [efrcTrim, h, ih]
+      rw [efrcTrim, h]
+      change efrcTrim (a :: b :: bs) = a :: b :: bs
+      rw [efrcTrim, ih]
 
 def efrcCanonical (as : List ℚ) : List ℚ :=
   match efrcTrim as with
