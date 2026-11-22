@@ -1148,3 +1148,26 @@ theorem efrc_canonical_iff (as bs : List ℚ) :
       _ = efrcPoly bs := efrc_canonical_sound bs
 
 end CLUIOT
+
+namespace CLUIOT
+def efrcExprCoeffs : UfrsExpr → List ℚ
+  | .var => [0, 1]
+  | .lit q => [q]
+  | .add a b => efrcAdd (efrcExprCoeffs a) (efrcExprCoeffs b)
+  | .sub a b => efrcAdd (efrcExprCoeffs a) (efrcScale (-1) (efrcExprCoeffs b))
+  | .mul a b => efrcConvolve (efrcExprCoeffs a) (efrcExprCoeffs b)
+
+theorem efrc_expr_coeffs_sound (e : UfrsExpr) :
+    efrcPoly (efrcExprCoeffs e) = ufrsNormalize e := by
+  induction e with
+  | var => simpa [efrcExprCoeffs, ufrsNormalize] using efrc_poly_variable
+  | lit q => simpa [efrcExprCoeffs, ufrsNormalize] using efrc_poly_literal q
+  | add a b ha hb => simp [efrcExprCoeffs, ufrsNormalize, efrc_poly_add, ha, hb]
+  | sub a b ha hb => simp [efrcExprCoeffs, ufrsNormalize, efrc_poly_sub, ha, hb]
+  | mul a b ha hb => simp [efrcExprCoeffs, ufrsNormalize, efrc_poly_convolve, ha, hb]
+
+theorem efrc_expr_canonical_iff (a b : UfrsExpr) :
+    efrcCanonical (efrcExprCoeffs a) = efrcCanonical (efrcExprCoeffs b) ↔
+      ufrsNormalize a = ufrsNormalize b := by
+  rw [← efrc_canonical_iff, efrc_expr_coeffs_sound, efrc_expr_coeffs_sound]
+end CLUIOT
