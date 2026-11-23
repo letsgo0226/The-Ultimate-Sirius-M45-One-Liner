@@ -1375,3 +1375,29 @@ theorem udlc_dynamic_pair_peak (d A : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d)
   exact add_le_add (udlc_dynamic_pair_bound d k hd ha hb n) (hA n)
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Variable cycles may have net loss, provided their boundary orbit is controlled.
+theorem udlc_dynamic_pair_reduce (d : ℤ) (k : ℕ → ℤ)
+    (hd : 0 ≤ d) (ha : ∀ n, 0 ≤ k (2*n)) (n : ℕ) :
+    udlcDynamic d k (2*n) =
+      udlcDynamic d (fun j => k (2*j) + k (2*j+1)) n := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    have hidx : 2*(n+1) = (2*n+1)+1 := by omega
+    rw [hidx, udlcDynamic, udlcDynamic]
+    rw [max_eq_right (add_nonneg (udlc_dynamic_nonneg d k hd _) (ha n))]
+    rw [ih, udlcDynamic]
+    congr 1
+    ring
+
+theorem udlc_dynamic_pair_repair (d : ℤ) (k : ℕ → ℤ)
+    (hd : 0 ≤ d) (ha : ∀ n, 0 ≤ k (2*n))
+    (hb : ∀ n, k (2*n) + k (2*n+1) ≤ -1) :
+    udlcDynamic d k (2*d.toNat) = 0 := by
+  rw [udlc_dynamic_pair_reduce d k hd ha]
+  exact udlc_dynamic_finite_zero d _ hd hb
+
+end CLUIOT
