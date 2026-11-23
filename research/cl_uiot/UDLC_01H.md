@@ -1,0 +1,3 @@
+# UDLC-01H — bounded potential certificate
+
+Baseline Lean CI 45116089119 and offline CI 45116099488 passed (127 audit entries). Candidate theorem: if d<=P(0), 0<=P(n)<=B and P(n)+k(n)<=P(n+1) for all n, the reflected integer damage orbit stays <=B. Induction bounds each state by P(n). Positive increments are allowed, for example alternating +3,-3 with P alternating 0,3. This is sufficient, not a claim that mean net loss alone suffices. Finite Python regression is not a proof of implementation refinement. 128 audit entries pending CI. Abstract mathematics only; no biological calibration, clinical or spiritual inference. No merge or deployment.
