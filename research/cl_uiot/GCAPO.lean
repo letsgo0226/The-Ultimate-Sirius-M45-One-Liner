@@ -1348,3 +1348,30 @@ theorem udlc_cycle_recovery (d a b : ℤ) (hd : 0 ≤ d) (hb : a < b)
     (udlc_damage_finite_zero d (a-b) hd hk) m
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- A variable two-step cycle: nonnegative damage then sufficient repair.
+theorem udlc_dynamic_pair_bound (d : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d)
+    (ha : ∀ n, 0 ≤ k (2*n))
+    (hb : ∀ n, k (2*n) + k (2*n+1) ≤ 0) (n : ℕ) :
+    udlcDynamic d k (2*n) ≤ d := by
+  induction n with
+  | zero => simpa [udlcDynamic]
+  | succ n ih =>
+    have hidx : 2*(n+1) = (2*n+1)+1 := by omega
+    rw [hidx, udlcDynamic, udlcDynamic]
+    rw [max_eq_right (add_nonneg (udlc_dynamic_nonneg d k hd _) (ha n))]
+    apply max_le hd
+    have hh := hb n
+    omega
+
+theorem udlc_dynamic_pair_peak (d A : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d)
+    (ha : ∀ n, 0 ≤ k (2*n))
+    (hb : ∀ n, k (2*n) + k (2*n+1) ≤ 0)
+    (hA : ∀ n, k (2*n) ≤ A) (n : ℕ) :
+    udlcDynamic d k (2*n+1) ≤ d+A := by
+  rw [udlcDynamic, max_eq_right (add_nonneg (udlc_dynamic_nonneg d k hd _) (ha n))]
+  exact add_le_add (udlc_dynamic_pair_bound d k hd ha hb n) (hA n)
+
+end CLUIOT
