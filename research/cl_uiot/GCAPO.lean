@@ -1281,3 +1281,40 @@ theorem udlc_damage_zero_forever (d k : ℤ) (n : ℕ)
   | succ m ih =>
     exact udlc_damage_zero_preserved d k (n+m) hk ih
 end CLUIOT
+
+namespace CLUIOT
+
+def udlcDynamic (d : ℤ) (k : ℕ → ℤ) : ℕ → ℤ
+  | 0 => d
+  | n+1 => max 0 (udlcDynamic d k n + k n)
+
+theorem udlc_dynamic_nonneg (d : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d) (n : ℕ) :
+    0 ≤ udlcDynamic d k n := by
+  cases n with
+  | zero => exact hd
+  | succ n => exact le_max_left _ _
+
+theorem udlc_dynamic_compare (d e : ℤ) (k l : ℕ → ℤ)
+    (hde : d ≤ e) (hkl : ∀ n, k n ≤ l n) (n : ℕ) :
+    udlcDynamic d k n ≤ udlcDynamic e l n := by
+  induction n with
+  | zero => exact hde
+  | succ n ih =>
+    change max 0 (udlcDynamic d k n + k n) ≤
+      max 0 (udlcDynamic e l n + l n)
+    exact max_le_max le_rfl (add_le_add ih (hkl n))
+
+theorem udlc_dynamic_constant (d k : ℤ) (n : ℕ) :
+    udlcDynamic d (fun _ => k) n = udlcDamage d k n := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [udlcDynamic, udlcDamage, ih]
+
+theorem udlc_dynamic_finite_zero (d : ℤ) (k : ℕ → ℤ)
+    (hd : 0 ≤ d) (hk : ∀ n, k n ≤ -1) :
+    udlcDynamic d k d.toNat = 0 := by
+  have h := udlc_dynamic_compare d d k (fun _ => -1) le_rfl hk d.toNat
+  rw [udlc_dynamic_constant, udlc_damage_finite_zero d (-1) hd (by norm_num)] at h
+  exact le_antisymm h (udlc_dynamic_nonneg d k hd _)
+
+end CLUIOT
