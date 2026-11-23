@@ -1318,3 +1318,33 @@ theorem udlc_dynamic_finite_zero (d : ℤ) (k : ℕ → ℤ)
   exact le_antisymm h (udlc_dynamic_nonneg d k hd _)
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- One full cycle: nonnegative damage a, followed by repair b.
+theorem udlc_cycle_step (x a b : ℤ) (hx : 0 ≤ x) (ha : 0 ≤ a) :
+    max 0 (max 0 (x+a)-b) = max 0 (x+(a-b)) := by
+  rw [max_eq_right (add_nonneg hx ha)]
+  congr 1
+  ring
+
+theorem udlc_cycle_bound (d a b : ℤ) (hd : 0 ≤ d) (ha : 0 ≤ a)
+    (hb : a ≤ b) (n : ℕ) :
+    udlcDamage d (a-b) n ≤ d ∧ udlcDamage d (a-b) n + a ≤ d+a := by
+  have hk : a-b ≤ 0 := sub_nonpos.mpr hb
+  have h : udlcDamage d (a-b) n ≤ d := by
+    rw [udlc_damage_closed d (a-b) hd n]
+    apply max_le hd
+    have hm : (n : ℤ)*(a-b) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos (by positivity) hk
+    omega
+  exact ⟨h, add_le_add_right h a⟩
+
+theorem udlc_cycle_recovery (d a b : ℤ) (hd : 0 ≤ d) (hb : a < b)
+    (m : ℕ) :
+    udlcDamage d (a-b) (d.toNat+m) = 0 := by
+  have hk : a-b < 0 := sub_neg.mpr hb
+  exact udlc_damage_zero_forever d (a-b) d.toNat (le_of_lt hk)
+    (udlc_damage_finite_zero d (a-b) hd hk) m
+
+end CLUIOT
