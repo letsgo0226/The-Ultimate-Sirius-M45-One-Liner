@@ -1,0 +1,3 @@
+# UDLC-01J — Interval excursion bounds
+
+Baseline Lean CI 45134172942 passed; comparison to head 6a2d589081026205be3f72da6e1574c810a9874a shows only documentation and Python test changes. Offline CI 45134182176 passed. For d>=0, every interval increment S(j)-S(i), i<=j, is at most reflected damage at j. Conversely, if all upward interval increments are at most B>=0, damage is at most d+B. For d=0 these imply equivalence of uniform bounds. Negative drift need not have bounded prefixes (e.g. alternating -3,+2). Candidate Lean proofs and finite regressions pending CI; 131 audit entries. No biological inference or deployment.
