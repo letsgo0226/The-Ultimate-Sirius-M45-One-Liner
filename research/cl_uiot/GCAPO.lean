@@ -1450,3 +1450,59 @@ theorem udlc_dynamic_prefix_range_bound (d L U : ℤ) (k : ℕ → ℤ)
     omega
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Every interval's net increment is bounded above by terminal reflected damage.
+theorem udlc_interval_lower (d : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d)
+    (i j : ℕ) (hij : i ≤ j) :
+    udlcPrefix k j - udlcPrefix k i ≤ udlcDynamic d k j := by
+  induction j with
+  | zero =>
+    have hi : i = 0 := by omega
+    subst i
+    simpa [udlcPrefix, udlcDynamic] using hd
+  | succ j ih =>
+    by_cases he : i = j+1
+    · subst i
+      rw [sub_self]
+      exact udlc_dynamic_nonneg d k hd _
+    · have hi : i ≤ j := by omega
+      have h := ih hi
+      have hm := le_max_right 0 (udlcDynamic d k j + k j)
+      rw [udlcPrefix, udlcDynamic]
+      omega
+
+-- A bounded upward interval excursion is sufficient even for unbounded negative prefixes.
+theorem udlc_interval_upper (d B : ℤ) (k : ℕ → ℤ)
+    (hd : 0 ≤ d) (hB : 0 ≤ B)
+    (h : ∀ i j : ℕ, i ≤ j → udlcPrefix k j - udlcPrefix k i ≤ B)
+    (n : ℕ) : udlcDynamic d k n ≤ d+B := by
+  have aux : ∀ j, udlcDynamic d k j ≤ d + udlcPrefix k j ∨
+      ∃ i : ℕ, i ≤ j ∧ udlcDynamic d k j ≤ udlcPrefix k j - udlcPrefix k i := by
+    intro j
+    induction j with
+    | zero => left; simp [udlcDynamic, udlcPrefix]
+    | succ j ih =>
+      by_cases hz : udlcDynamic d k j + k j ≤ 0
+      · right
+        refine ⟨j+1, le_rfl, ?_⟩
+        rw [udlcDynamic, max_eq_left hz, sub_self]
+      · have hn : 0 ≤ udlcDynamic d k j + k j := by omega
+        rw [udlcDynamic, max_eq_right hn]
+        rcases ih with hh | ⟨i, hi, hh⟩
+        · left
+          rw [udlcPrefix]
+          omega
+        · right
+          refine ⟨i, by omega, ?_⟩
+          rw [udlcPrefix]
+          omega
+  rcases aux n with hh | ⟨i, hi, hh⟩
+  · have hb := h 0 n (Nat.zero_le n)
+    change udlcPrefix k n - 0 ≤ B at hb
+    omega
+  · have hb := h i n hi
+    omega
+
+end CLUIOT
