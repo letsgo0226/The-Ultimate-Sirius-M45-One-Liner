@@ -1506,3 +1506,24 @@ theorem udlc_interval_upper (d B : ℤ) (k : ℕ → ℤ)
     omega
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Running minimum of the prefix, including the initial offset.
+def udlcFloor (d : ℤ) (k : ℕ → ℤ) : ℕ → ℤ
+  | 0 => -d
+  | n+1 => min (udlcFloor d k n) (udlcPrefix k (n+1))
+
+theorem udlc_reflection_exact (d : ℤ) (k : ℕ → ℤ) (n : ℕ) :
+    udlcDynamic d k n = udlcPrefix k n - udlcFloor d k n := by
+  induction n with
+  | zero => simp [udlcDynamic, udlcPrefix, udlcFloor]
+  | succ n ih =>
+    rw [udlcDynamic, ih, udlcFloor, udlcPrefix]
+    by_cases h : udlcFloor d k n ≤ udlcPrefix k n + k n
+    · rw [min_eq_left h, max_eq_right (by omega)]
+      omega
+    · rw [min_eq_right (by omega), max_eq_left (by omega)]
+      omega
+
+end CLUIOT
