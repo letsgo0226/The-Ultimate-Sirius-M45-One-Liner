@@ -1,0 +1,3 @@
+# UDLC-01L — sharp pointwise bound
+
+Baseline: Lean run 45149666029 and Python run 45149680235 passed; comparison to baseline head changes only documentation and Python tests after Lean. Candidate theorem: for d >= 0, damage at n <= B iff d + S(n) <= B and every suffix S(n)-S(i) <= B (0 <= i <= n). Thus the exact finite maximum is the least pointwise upper bound; quantifying over n gives a uniform bound criterion. Proof uses induction with shifted B and interval lower bound. Python finite enumeration covers 12,500 sequences. Pending CI; abstract integer recurrence only, no biological or clinical inference. No merge or deployment.

@@ -1527,3 +1527,54 @@ theorem udlc_reflection_exact (d : ℤ) (k : ℕ → ℤ) (n : ℕ) :
       omega
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- Sharp bound at a specified time: initial-offset and every suffix constraint.
+theorem udlc_point_bound_iff (d B : ℤ) (k : ℕ → ℤ) (hd : 0 ≤ d) (n : ℕ) :
+    udlcDynamic d k n ≤ B ↔
+      d + udlcPrefix k n ≤ B ∧
+      (∀ i : ℕ, i ≤ n → udlcPrefix k n - udlcPrefix k i ≤ B) := by
+  induction n generalizing B with
+  | zero =>
+    constructor
+    · intro h
+      change d ≤ B at h
+      refine ⟨by simpa [udlcPrefix] using h, ?_⟩
+      intro i hi
+      have he : i = 0 := by omega
+      subst i
+      rw [sub_self]
+      omega
+    · intro h
+      simpa [udlcDynamic, udlcPrefix] using h.1
+  | succ n ih =>
+    constructor
+    · intro h
+      have hs : udlcDynamic d k n + k n ≤ B :=
+        le_trans (le_max_right 0 _) (show max 0 (udlcDynamic d k n + k n) ≤ B from h)
+      have hp := (ih (B - k n)).mp (show udlcDynamic d k n ≤ B - k n from by omega)
+      refine ⟨?_, ?_⟩
+      · rw [udlcPrefix]
+        have hh := hp.1
+        omega
+      · intro i hi
+        exact le_trans (udlc_interval_lower d k hd i (n+1) hi) h
+    · intro h
+      have hz := h.2 (n+1) le_rfl
+      rw [sub_self] at hz
+      change max 0 (udlcDynamic d k n + k n) ≤ B
+      apply max_le hz
+      have hp : udlcDynamic d k n ≤ B - k n := by
+        apply (ih (B - k n)).mpr
+        constructor
+        · have hh := h.1
+          rw [udlcPrefix] at hh
+          omega
+        · intro i hi
+          have hh := h.2 i (by omega)
+          rw [udlcPrefix] at hh
+          omega
+      omega
+
+end CLUIOT
