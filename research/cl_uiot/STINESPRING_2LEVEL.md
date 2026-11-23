@@ -1,0 +1,5 @@
+# Exact two-qubit Stinespring dilation
+
+Basis order |00>, |01>, |10>, |11> (system first). Choose t in [0,1], r=(1-t²)/(1+t²), s=2t/(1+t²). The unitary leaves |00>,|11> fixed and maps |10> to r|10>+s|01>, |01> to r|01>-s|10>. Since r²+s²=1, this is an exact orthogonal real unitary. With a fresh environment |0>, tracing E gives the previous amplitude damping channel. At t=1, the system is reset and the entire original state is transferred to E. For intermediate t, information may reside in correlations; the system marginal alone need not permit physical reversal. Applying U† to the retained joint output recovers the input. Global spectrum and von Neumann entropy are preserved by unitary conjugation. Exact tests cover rational real states and purity, not numerical entropy or arbitrary complex matrices.
+
+This is one explicit dilation, not a new proof of the general Stinespring theorem. Repeated damping requires fresh environments or their reset; reusing the same environment does not generally produce the iterated channel. No claim of entropy destruction, perpetual computation, thermodynamic cost reduction, or hardware independence. No merge or deployment.

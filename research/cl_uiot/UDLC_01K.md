@@ -1,0 +1,3 @@
+# UDLC-01K — Exact reflection identity
+
+Baseline Lean CI 45141303076 passed; comparison to b77c093631b538770f2d287e9e65600745084bc8 shows only documentation and Python test changes. Offline CI 45141315819 passed. Define F(0)=-d and F(n+1)=min(F(n),S(n+1)), where S is the cumulative increment. Candidate theorem: damage(n)=S(n)-F(n), including n=0. For d>=0 this equals max(d+S(n), max_{0<=i<=n}(S(n)-S(i))). The latter characterization and sharp uniform bound remain future formal work. Finite Python regression checks 12500 sequences and their intermediate states. 132 audit entries pending CI. Abstract integer model only; no biological inference or deployment.

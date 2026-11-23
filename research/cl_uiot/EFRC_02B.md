@@ -1,0 +1,2 @@
+# EFRC-02B: signed magnitude bounds
+Previous Lean CI 44945818585 and offline CI 44945826271 passed. Added signed product, signed sum, signed cross-sum and natural quotient magnitude bounds, four audit entries (71 total), CI pending. Denominator product is an instance of EFRC-02 multiplication; quotient bound is a component of reduction, not a proof of Fraction normalization. Subtraction via negation, canonical gcd normalization, bit_length correspondence and integrated guard remain open. No approval, merge, deployment or baseline change.

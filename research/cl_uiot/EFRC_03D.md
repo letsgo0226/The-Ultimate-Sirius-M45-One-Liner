@@ -1,0 +1,2 @@
+# EFRC-03D: canonicalization model
+Previous Lean CI 45018981832 and offline CI 45018991663 passed (95 entries). Added recursive trailing zero removal with empty internal zero and singleton [0] public zero representation. Four proposed theorems: trim and canonical semantic preservation and idempotence. 99 audit entries pending CI. Different-length canonical uniqueness, coefficient indexing and equivalence to Python trimming loop remain open. No approval, merge, deployment or baseline change.

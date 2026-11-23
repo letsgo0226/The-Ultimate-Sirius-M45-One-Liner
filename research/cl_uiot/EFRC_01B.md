@@ -1,0 +1,2 @@
+# EFRC-01B: inverse decoder soundness
+Previous Lean CI 44944594910 and offline 44944604879 succeeded. Added decoder success implying exact re-encoding and length bound, success iff bounded encoding, rejection iff no bounded encoding exists. Three new audit entries, total 63, CI pending. Uses least-significant-first Lean model; EFRC-01 handles reversal for Python order. Python bit-length guard, dynamic typing and interpreter refinement remain open. No approval, merge, deployment or baseline change.

@@ -1,0 +1,5 @@
+# Certified Rosen Volterra fixed points
+
+On C([-L,L]) with sup norm let T f=1 +/- integral_0^u (u-v)K(v)f(v) dv. For polynomial K=sum k_i u^i, q=L² sum |k_i| L^i/2 bounds the operator Lipschitz constant. The oriented integral for negative u obeys the same bound. If q<1, Banach gives a unique continuous fixed point, twice continuously differentiable by the integral equation. It solves f''=+/-K f with f(0)=1,f'(0)=0. Starting at 1, the error after n iterations is at most q^(n+1)/(1-q). For q<1/2, f>=1-q/(1-q)>0, giving a nonsingular Lorentzian Rosen patch for both signs. The vacuum Ricci equation follows by cancellation; a nonzero K gives nonzero curvature somewhere. For polynomial K the ODE also has analytic solutions by the analytic linear ODE theorem.
+
+The implementation uses exact rational polynomial integration and conservative sufficient bounds, not necessary conditions. It does not cover arbitrary initial TT perturbations, global geometry or general Einstein equations. No merge or deployment.

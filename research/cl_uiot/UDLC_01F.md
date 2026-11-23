@@ -1,0 +1,2 @@
+# UDLC-01F
+UDLC-01E baseline: Lean 45107735176 and Python 45107745361 passed (123 audit entries). Two candidate theorems permit varying nonnegative damage each pair and repair at least equal to damage. Pair boundary <= initial damage; intermediate peak <= initial damage + uniform damage cap A. Without a uniform cap, equal damage and repair can yield unbounded peaks. Bounded regression added; 125 audit entries pending CI. This is not arbitrary intermittent recovery or a biological model. No merge or deployment.

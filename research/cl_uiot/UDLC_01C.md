@@ -1,0 +1,2 @@
+# UDLC-01C
+Baseline Lean CI 45038031461 and offline CI 45038044013 passed (112 audit entries). Four candidate theorems: zero iff closed-form threshold, one-step zero preservation, finite zero by d.toNat for negative integer net loss, and preservation for all subsequent finite steps. 116 audit entries pending CI. The bound is sufficient, not necessarily minimal. Fixed integer model only; no biological or spiritual conclusion, no clinical calibration or intervention. No merge or deployment.

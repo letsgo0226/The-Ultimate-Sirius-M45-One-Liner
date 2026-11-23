@@ -1,0 +1,2 @@
+# UDLC-01D
+Baseline Lean CI 45080303603 and offline CI 45080314504 passed (116 audit entries). Four candidate theorems: dynamic integer damage nonnegativity, pointwise comparison, constant sequence compatibility, finite zero under uniform k(n)<=-1. Pending CI (120 audit entries). The uniform bound excludes positive damage steps; intermittent recovery needs a separate theorem. No biological calibration, clinical inference, or spiritual survival claim. No merge or deployment.

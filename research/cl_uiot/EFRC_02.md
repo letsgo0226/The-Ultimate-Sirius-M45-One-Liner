@@ -1,0 +1,2 @@
+# EFRC-02: magnitude bounds, part 1
+Previous corrected Lean CI 44945113750 and offline CI 44945119158 passed. Reviewed bounded_rational.py. Define Fits(a,k) := a < 2^k on naturals; add multiplication, same-budget addition, monotonicity, cross-sum upper bound. Four new audit entries, total 67, pending CI. Bounds model unsigned magnitudes; signed abs, actual Python bit_length equivalence, reduction by gcd, denominator and guard integration remain open. Not a runtime or memory bound. No approval, merge, deployment or baseline change.

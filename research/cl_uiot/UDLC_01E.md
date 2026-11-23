@@ -1,0 +1,3 @@
+# UDLC-01E — periodic repair
+Baseline: Lean run 45100847321 (audit commit c36606e), Python run 45100859772 (head 5a61728), both passed. Lean workflow excludes documentation-only changes. 120 audited entries.
+For nonnegative x,a, a damage step followed by repair b reduces exactly to max(0,x+a-b). With b>=a and nonnegative initial damage d, cycle-boundary damage is at most d and intermediate peak at most d+a. For integer b>a, boundaries are zero after at most d cycles and remain zero at boundaries. Intermediate damage can still be positive. Three candidate Lean proofs (123 audit entries) and bounded Python regression submitted; pending CI. No claim about arbitrary intermittent sequences, clinical outcomes, spiritual energy, or immortality. No deployment or merge.
