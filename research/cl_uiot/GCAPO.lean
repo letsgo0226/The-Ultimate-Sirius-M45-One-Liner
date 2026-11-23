@@ -1420,3 +1420,33 @@ theorem udlc_dynamic_potential_bound (d B : ℤ) (k : ℕ → ℤ)
   exact le_trans (h n) (hB n)
 
 end CLUIOT
+
+namespace CLUIOT
+
+def udlcPrefix (k : ℕ → ℤ) : ℕ → ℤ
+  | 0 => 0
+  | n+1 => udlcPrefix k n + k n
+
+-- A bounded prefix range supplies an explicit potential certificate.
+theorem udlc_dynamic_prefix_range_bound (d L U : ℤ) (k : ℕ → ℤ)
+    (hd : 0 ≤ d) (hl : ∀ n, L ≤ udlcPrefix k n)
+    (hu : ∀ n, udlcPrefix k n ≤ U) (n : ℕ) :
+    udlcDynamic d k n ≤ d + U - L := by
+  apply udlc_dynamic_potential_bound d (d + U - L) k
+    (fun j => d + udlcPrefix k j - L)
+  · have h := hl 0
+    change L ≤ 0 at h
+    change d ≤ d + 0 - L
+    omega
+  · intro j
+    have h := hl j
+    omega
+  · intro j
+    have h := hu j
+    omega
+  · intro j
+    change d + udlcPrefix k j - L + k j ≤
+      d + (udlcPrefix k j + k j) - L
+    omega
+
+end CLUIOT
