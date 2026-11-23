@@ -1401,3 +1401,22 @@ theorem udlc_dynamic_pair_repair (d : ℤ) (k : ℕ → ℤ)
   exact udlc_dynamic_finite_zero d _ hd hb
 
 end CLUIOT
+
+namespace CLUIOT
+
+-- A bounded potential permits positive increments without unbounded damage.
+theorem udlc_dynamic_potential_bound (d B : ℤ) (k : ℕ → ℤ)
+    (P : ℕ → ℤ) (h0 : d ≤ P 0)
+    (hp : ∀ n, 0 ≤ P n) (hB : ∀ n, P n ≤ B)
+    (hk : ∀ n, P n + k n ≤ P (n+1)) (n : ℕ) :
+    udlcDynamic d k n ≤ B := by
+  have h : ∀ j, udlcDynamic d k j ≤ P j := by
+    intro j
+    induction j with
+    | zero => exact h0
+    | succ j ih =>
+      change max 0 (udlcDynamic d k j + k j) ≤ P (j+1)
+      exact max_le (hp _) (le_trans (add_le_add_right ih _) (hk j))
+  exact le_trans (h n) (hB n)
+
+end CLUIOT
